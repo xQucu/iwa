@@ -93,7 +93,7 @@ public class StudentRESTController {
         return new ResponseEntity<Student>(student, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = "/", method = RequestMethod.DELETE)
     // Delete all
     public void deleteAllStudents() {
         studentRepository.deleteAll();
