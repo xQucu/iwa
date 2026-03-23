@@ -1,0 +1,259 @@
+{
+  "info": {
+    "_postman_id": "f9f4113e-fefd-4771-a329-48e616066669",
+    "name": "iwa_lab3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28337001"
+  },
+  "item": [
+    {
+      "name": "get all students",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"test2@example.com\",\r\n    \"password\": \"test\"\r\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "add new student",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"kucykadrian2004@gmail.com\",\n    \"firstName\": \"Adrian\",\n    \"lastName\": \"Kucyk\",\n    \"number\": 500899495\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete student by id",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8080/students/1",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "replace or create student by id",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"mk@gmail.com\",\n    \"firstName\": \"Marek\",\n    \"lastName\": \"Kowalski\",\n    \"number\": 111111111\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students/6",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students",
+            "6"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "update student by id",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"kucykadrian@gmail.com\",\n    \"firstName\": \"Adrian\",\n    \"lastName\": \"Kucyk\",\n    \"number\": \"500899495\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students/55",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students",
+            "55"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "replace all students",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n    {\n        \"email\": \"test@example.com\",\n        \"firstName\": \"testName\",\n        \"lastName\": \"testLastName\",\n        \"number\": \"000111222\"\n    },\n    {\n        \"email\": \"mkm@gmail.com\",\n        \"firstName\": \"Marek\",\n        \"lastName\": \"Kowalski\",\n        \"number\": \"111111111\"\n    },\n    {\n        \"email\": \"kucykadrian@gmail.com\",\n        \"firstName\": \"Marek\",\n        \"lastName\": \"Kowalski\",\n        \"number\": \"500899495\"\n    }\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get student by id",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"email\": \"test2@example.com\",\r\n    \"password\": \"test\"\r\n}"
+        },
+        "url": {
+          "raw": "http://127.0.0.1:8080/students/104",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students",
+            "104"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://127.0.0.1:8080/students/104",
+          "protocol": "http",
+          "host": [
+            "127",
+            "0",
+            "0",
+            "1"
+          ],
+          "port": "8080",
+          "path": [
+            "students",
+            "104"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
