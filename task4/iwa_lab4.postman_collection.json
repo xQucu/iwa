@@ -1,0 +1,563 @@
+{
+  "info": {
+    "_postman_id": "new-collection-id",
+    "name": "iwa_lab4",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "28337001"
+  },
+  "item": [
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "get all students",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get student by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/students/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new student (simple)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Adrian\",\n    \"lastName\": \"Kucyk\",\n    \"email\": \"adrian@example.com\",\n    \"number\": \"500899495\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new student (nested with address)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Marek\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"marek@example.com\",\n    \"number\": \"111111111\",\n    \"address\": {\n        \"city\": \"Warsaw\",\n        \"street\": \"Main St\",\n        \"number\": \"10\",\n        \"postalCode\": \"00-001\"\n    }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new student (nested with account)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Anna\",\n    \"lastName\": \"Nowak\",\n    \"email\": \"anna@example.com\",\n    \"number\": \"222222222\",\n    \"account\": {\n        \"accountName\": \"anna_account\"\n    }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new student (nested with teams)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Piotr\",\n    \"lastName\": \"Wisniewski\",\n    \"email\": \"piotr@example.com\",\n    \"number\": \"333333333\",\n    \"teamList\": [\n        {\"teamName\": \"DevTeam\"},\n        {\"teamName\": \"MarketingTeam\"}\n    ]\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update student by id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Marek\",\n    \"lastName\": \"Kowalski\",\n    \"email\": \"marek.updated@example.com\",\n    \"number\": \"999999999\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "partial update student by id",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"newemail@example.com\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete student by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/students/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete all students",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "replace all students",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n    {\n        \"firstName\": \"Test\",\n        \"lastName\": \"User\",\n        \"email\": \"test@example.com\",\n        \"number\": \"000111222\"\n    },\n    {\n        \"firstName\": \"John\",\n        \"lastName\": \"Doe\",\n        \"email\": \"john@example.com\",\n        \"number\": \"111111111\"\n    }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "get all accounts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get account by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new account (simple)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"accountName\": \"my_account\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update account by id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"accountName\": \"updated_account\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete account by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "get all addresses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get address by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new address",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"city\": \"Warsaw\",\n    \"street\": \"Main Street\",\n    \"number\": \"10\",\n    \"postalCode\": \"00-001\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update address by id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"city\": \"Krakow\",\n    \"street\": \"New Street\",\n    \"number\": \"20\",\n    \"postalCode\": \"30-001\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete address by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Teams",
+      "item": [
+        {
+          "name": "get all teams",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get team by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"teamName\": \"DevTeam\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update team by id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"teamName\": \"UpdatedTeam\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete team by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams", "1"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

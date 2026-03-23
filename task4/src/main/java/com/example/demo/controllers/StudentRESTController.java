@@ -24,8 +24,9 @@ public class StudentRESTController {
     private AddressRepository addressRepository;
 
     @Autowired
-    public StudentRESTController(StudentRepository studentRepository) {
+    public StudentRESTController(StudentRepository studentRepository, AddressRepository addressRepository) {
         this.studentRepository = studentRepository;
+        this.addressRepository = addressRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -35,7 +36,7 @@ public class StudentRESTController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        if (student.getAddress().getId() <= 0) {
+        if (student.getAddress() != null && student.getAddress().getId() <= 0) {
             addressRepository.save(student.getAddress());
         }
         studentRepository.save(student);
