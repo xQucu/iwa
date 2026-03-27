@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -64,5 +65,40 @@ public class AccountRESTController {
         }
         accountRepository.deleteById(id);
         return new ResponseEntity<Account>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PATCH)
+    public ResponseEntity<Account> updatePartOfAccount(@RequestBody Map<String, Object> updates,
+            @PathVariable("id") long id) {
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account == null) {
+            return new ResponseEntity<Account>(HttpStatus.NOT_FOUND);
+        }
+        partialUpdate(account, updates);
+        return new ResponseEntity<Account>(HttpStatus.NO_CONTENT);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public void substituteCollection(@RequestBody List<Account> accounts) {
+        deleteAllAccounts();
+        for (Account account : accounts) {
+            accountRepository.save(account);
+        }
+        ResponseEntity.ok();
+        return;
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.DELETE)
+    public void deleteAllAccounts() {
+        accountRepository.deleteAll();
+        ResponseEntity.noContent();
+        return;
+    }
+
+    private void partialUpdate(Account account, Map<String, Object> updates) {
+        if (updates.containsKey("accountName")) {
+            account.setAccountName((String) updates.get("accountName"));
+        }
+        accountRepository.save(account);
     }
 }
