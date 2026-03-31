@@ -1,0 +1,7 @@
+.calc {
+  display: flex col wrap;
+  div {
+    display: flex;
+    gap: 1rem;
+  }
+}
