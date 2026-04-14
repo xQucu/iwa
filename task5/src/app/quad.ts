@@ -7,7 +7,7 @@ import { MatFormField } from '@angular/material/select';
 @Component({
   selector: 'app-quad',
   template: `<div class="calc">
-    <h1>Calculator</h1>
+    <h1>Quadratic</h1>
     <div>
       <mat-form-field class="example-full-width">
         <mat-label>A</mat-label>
