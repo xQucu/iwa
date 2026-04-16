@@ -1,0 +1,15 @@
+<div class="calc">
+  <h1>Fib sequence</h1>
+  <div>
+    <mat-form-field class="example-full-width">
+      <input
+        matInput
+        type="number"
+        [ngModel]="number()"
+        (ngModelChange)="number.set($event)"
+      />
+    </mat-form-field>
+  </div>
+
+  <p>Result: {{ result() }}</p>
+</div>

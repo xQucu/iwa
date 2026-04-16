@@ -1,0 +1,25 @@
+<div class="calc">
+  <h1>Calculator</h1>
+  <div>
+    <mat-form-field class="example-full-width">
+      <input matInput type="number" [(ngModel)]="leftNumber" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select [(value)]="operation">
+        <mat-option value="+">+</mat-option>
+        <mat-option value="-">-</mat-option>
+        <mat-option value="*">*</mat-option>
+        <mat-option value="/">/</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <input matInput type="number" [(ngModel)]="rightNumber" />
+    </mat-form-field>
+  </div>
+  <button matButton="elevated" (click)="calculate()">Calculate</button>
+  @if (isValid()) {
+  <p>Result: {{ result() }}</p>
+  } @else {
+  <p>Ensure that the calculation is allowed</p>
+  }
+</div>

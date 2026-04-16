@@ -28,7 +28,8 @@ public class StudentRESTController {
     private AccountRepository accountRepository;
 
     @Autowired
-    public StudentRESTController(StudentRepository studentRepository, AddressRepository addressRepository, AccountRepository accountRepository) {
+    public StudentRESTController(StudentRepository studentRepository, AddressRepository addressRepository,
+            AccountRepository accountRepository) {
         this.studentRepository = studentRepository;
         this.addressRepository = addressRepository;
         this.accountRepository = accountRepository;
@@ -68,20 +69,20 @@ public class StudentRESTController {
             System.out.println("Student not found!");
             return new ResponseEntity<Student>(HttpStatus.NOT_FOUND);
         }
-        
+
         Long addressId = student.getAddress() != null ? student.getAddress().getId() : null;
         Long accountId = student.getAccount() != null ? student.getAccount().getId() : null;
-        
+
         studentRepository.deleteById(id);
-        
+
         if (addressId != null && !studentRepository.existsByAddressId(addressId)) {
             addressRepository.deleteById(addressId);
         }
-        
+
         if (accountId != null && !studentRepository.existsByAccountId(accountId)) {
             accountRepository.deleteById(accountId);
         }
-        
+
         return new ResponseEntity<Student>(HttpStatus.NO_CONTENT);
     }
 
@@ -139,9 +140,9 @@ public class StudentRESTController {
                 Student student = studentOpt.get();
                 Long addressId = student.getAddress() != null ? student.getAddress().getId() : null;
                 Long accountId = student.getAccount() != null ? student.getAccount().getId() : null;
-                
+
                 studentRepository.deleteById(id);
-                
+
                 if (addressId != null && !studentRepository.existsByAddressId(addressId)) {
                     addressRepository.deleteById(addressId);
                 }

@@ -1,0 +1,25 @@
+<div class="calc">
+  <h1>Quadratic</h1>
+  <div>
+    <mat-form-field class="example-full-width">
+      <mat-label>A</mat-label>
+      <input matInput type="number" [(ngModel)]="a" />
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>B</mat-label>
+      <input matInput type="number" [(ngModel)]="b" />
+    </mat-form-field>
+    <mat-form-field class="example-full-width">
+      <mat-label>C</mat-label>
+      <input matInput type="number" [(ngModel)]="c" />
+    </mat-form-field>
+  </div>
+  <button matButton="elevated" (click)="calculate()">Calculate</button>
+  @if (isValid()) {
+  <p>Result: {{ result1() }}</p>
+  @if (isSecondResultSet()) {
+  <p>Result2: {{ result2() }}</p>
+  } } @else {
+  <p>Ensure that the calculation is allowed (btw only real results)</p>
+  }
+</div>
