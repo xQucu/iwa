@@ -5,7 +5,7 @@ import { Fib } from "./fib/fib";
 import { Quad } from "./quad/quad";
 
 export const routes: Routes = [
-  { path: "", component: StudentForm },
+  { path: "", component: StudentForm, pathMatch: "full" },
   { path: "calc", component: Calc },
   { path: "fib", component: Fib },
   { path: "quad", component: Quad },
