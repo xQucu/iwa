@@ -8,4 +8,6 @@ import com.example.demo.models.Student;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Student findById(long id);
+    boolean existsByAccountId(Long accountId);
+    boolean existsByAddressId(Long addressId);
 }

@@ -1,13 +1,16 @@
 package com.example.demo.models;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -23,15 +26,17 @@ public class Student {
     private String email;
     private String number;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "account_id")
     private Account account;
 
-    @JsonBackReference
     @ManyToOne(cascade = CascadeType.MERGE)
     private Address address;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    private List<Team> teamList;
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.ALL, CascadeType.REMOVE})
+    @JoinTable(name = "student_team", joinColumns = @JoinColumn(name = "student_id"), inverseJoinColumns = @JoinColumn(name = "team_id"))
+    private List<Team> teamList = new ArrayList<>();
 
     public Account getAccount() {
         return account;

@@ -118,7 +118,7 @@
           "response": []
         },
         {
-          "name": "add new student (nested with teams)",
+          "name": "add new student (existing address by ID)",
           "request": {
             "method": "POST",
             "header": [
@@ -130,7 +130,33 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"firstName\": \"Piotr\",\n    \"lastName\": \"Wisniewski\",\n    \"email\": \"piotr@example.com\",\n    \"number\": \"333333333\",\n    \"teamList\": [\n        {\"teamName\": \"DevTeam\"},\n        {\"teamName\": \"MarketingTeam\"}\n    ]\n}",
+              "raw": "{\n    \"firstName\": \"Piotr\",\n    \"lastName\": \"Wisniewski\",\n    \"email\": \"piotr@example.com\",\n    \"number\": \"333333333\",\n    \"address\": {\n        \"id\": 1\n    }\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "http://127.0.0.1:8080/students",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["students"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "add new student (existing account by ID)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"firstName\": \"Test\",\n    \"lastName\": \"User\",\n    \"email\": \"test@example.com\",\n    \"number\": \"444444444\",\n    \"account\": {\n        \"id\": 1\n    }\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -182,7 +208,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"newemail@example.com\"\n}",
+              "raw": "{\n    \"firstName\": \"NewName\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -211,22 +237,22 @@
           "response": []
         },
         {
-          "name": "delete all students",
+          "name": "delete all students (bulk)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:8080/students",
+              "raw": "http://127.0.0.1:8080/students/",
               "protocol": "http",
               "host": ["127", "0", "0", "1"],
               "port": "8080",
-              "path": ["students"]
+              "path": ["students", ""]
             }
           },
           "response": []
         },
         {
-          "name": "replace all students",
+          "name": "replace all students (bulk)",
           "request": {
             "method": "PUT",
             "header": [
@@ -287,7 +313,7 @@
           "response": []
         },
         {
-          "name": "add new account (simple)",
+          "name": "add new account",
           "request": {
             "method": "POST",
             "header": [
@@ -339,21 +365,6 @@
           "response": []
         },
         {
-          "name": "delete account by id",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8080/accounts/1",
-              "protocol": "http",
-              "host": ["127", "0", "0", "1"],
-              "port": "8080",
-              "path": ["accounts", "1"]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "partial update account by id",
           "request": {
             "method": "PATCH",
@@ -380,7 +391,22 @@
           "response": []
         },
         {
-          "name": "replace all accounts",
+          "name": "delete account by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/accounts/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["accounts", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "replace all accounts (bulk)",
           "request": {
             "method": "PUT",
             "header": [
@@ -406,16 +432,16 @@
           "response": []
         },
         {
-          "name": "delete all accounts",
+          "name": "delete all accounts (bulk)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:8080/accounts",
+              "raw": "http://127.0.0.1:8080/accounts/",
               "protocol": "http",
               "host": ["127", "0", "0", "1"],
               "port": "8080",
-              "path": ["accounts"]
+              "path": ["accounts", ""]
             }
           },
           "response": []
@@ -508,21 +534,6 @@
           "response": []
         },
         {
-          "name": "delete address by id",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8080/addresses/1",
-              "protocol": "http",
-              "host": ["127", "0", "0", "1"],
-              "port": "8080",
-              "path": ["addresses", "1"]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "partial update address by id",
           "request": {
             "method": "PATCH",
@@ -549,7 +560,22 @@
           "response": []
         },
         {
-          "name": "replace all addresses",
+          "name": "delete address by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/addresses/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["addresses", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "replace all addresses (bulk)",
           "request": {
             "method": "PUT",
             "header": [
@@ -575,16 +601,16 @@
           "response": []
         },
         {
-          "name": "delete all addresses",
+          "name": "delete all addresses (bulk)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:8080/addresses",
+              "raw": "http://127.0.0.1:8080/addresses/",
               "protocol": "http",
               "host": ["127", "0", "0", "1"],
               "port": "8080",
-              "path": ["addresses"]
+              "path": ["addresses", ""]
             }
           },
           "response": []
@@ -677,21 +703,6 @@
           "response": []
         },
         {
-          "name": "delete team by id",
-          "request": {
-            "method": "DELETE",
-            "header": [],
-            "url": {
-              "raw": "http://127.0.0.1:8080/teams/1",
-              "protocol": "http",
-              "host": ["127", "0", "0", "1"],
-              "port": "8080",
-              "path": ["teams", "1"]
-            }
-          },
-          "response": []
-        },
-        {
           "name": "partial update team by id",
           "request": {
             "method": "PATCH",
@@ -718,7 +729,22 @@
           "response": []
         },
         {
-          "name": "replace all teams",
+          "name": "delete team by id",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://127.0.0.1:8080/teams/1",
+              "protocol": "http",
+              "host": ["127", "0", "0", "1"],
+              "port": "8080",
+              "path": ["teams", "1"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "replace all teams (bulk)",
           "request": {
             "method": "PUT",
             "header": [
@@ -744,16 +770,16 @@
           "response": []
         },
         {
-          "name": "delete all teams",
+          "name": "delete all teams (bulk)",
           "request": {
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://127.0.0.1:8080/teams",
+              "raw": "http://127.0.0.1:8080/teams/",
               "protocol": "http",
               "host": ["127", "0", "0", "1"],
               "port": "8080",
-              "path": ["teams"]
+              "path": ["teams", ""]
             }
           },
           "response": []

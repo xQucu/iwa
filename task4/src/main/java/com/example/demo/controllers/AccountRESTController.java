@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Account;
 import com.example.demo.repository.AccountRepository;
+import com.example.demo.repository.StudentRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,12 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("accounts")
 public class AccountRESTController {
     private AccountRepository accountRepository;
+    private StudentRepository studentRepository;
 
     @Autowired
-    public AccountRESTController(AccountRepository accountRepository) {
+    public AccountRESTController(AccountRepository accountRepository, StudentRepository studentRepository) {
         this.accountRepository = accountRepository;
+        this.studentRepository = studentRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -63,6 +66,9 @@ public class AccountRESTController {
         if (account == null) {
             return new ResponseEntity<Account>(HttpStatus.NOT_FOUND);
         }
+        if (studentRepository.existsByAccountId(id)) {
+            return new ResponseEntity<Account>(HttpStatus.CONFLICT);
+        }
         accountRepository.deleteById(id);
         return new ResponseEntity<Account>(HttpStatus.NO_CONTENT);
     }
@@ -89,10 +95,13 @@ public class AccountRESTController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    public void deleteAllAccounts() {
-        accountRepository.deleteAll();
-        ResponseEntity.noContent();
-        return;
+    public ResponseEntity<Void> deleteAllAccounts() {
+        for (Account a : accountRepository.findAll()) {
+            if (!studentRepository.existsByAccountId(a.getId())) {
+                accountRepository.deleteById(a.getId());
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private void partialUpdate(Account account, Map<String, Object> updates) {

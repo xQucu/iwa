@@ -1,14 +1,15 @@
 package com.example.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Address {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     long id;
 
     private String city;
@@ -16,12 +17,9 @@ public class Address {
     private String number;
     private String postalCode;
 
-    @JsonManagedReference
+    @JsonIgnore
     @OneToMany(mappedBy = "address", fetch = FetchType.EAGER)
-    // @JoinTable(name="student_address",joinColumns =
-    // @JoinColumn(name="student_id"),
-    // inverseJoinColumns = @JoinColumn(name="address_id"))
-    private List<Student> studentList;
+    private List<Student> studentList = new ArrayList<>();
 
     public long getId() {
         return id;

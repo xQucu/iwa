@@ -7,4 +7,5 @@ import com.example.demo.models.Address;
 
 @Repository
 public interface AddressRepository extends JpaRepository<Address, Long> {
+    boolean existsByStudentListId(Long id);
 }

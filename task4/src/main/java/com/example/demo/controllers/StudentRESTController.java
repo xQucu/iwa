@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Student;
+import com.example.demo.models.Address;
+import com.example.demo.models.Account;
 import com.example.demo.repository.AddressRepository;
+import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.StudentRepository;
 
 import org.springframework.http.HttpStatus;
@@ -22,11 +25,13 @@ import org.springframework.http.ResponseEntity;
 public class StudentRESTController {
     private StudentRepository studentRepository;
     private AddressRepository addressRepository;
+    private AccountRepository accountRepository;
 
     @Autowired
-    public StudentRESTController(StudentRepository studentRepository, AddressRepository addressRepository) {
+    public StudentRESTController(StudentRepository studentRepository, AddressRepository addressRepository, AccountRepository accountRepository) {
         this.studentRepository = studentRepository;
         this.addressRepository = addressRepository;
+        this.accountRepository = accountRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -36,8 +41,21 @@ public class StudentRESTController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        if (student.getAddress() != null && student.getAddress().getId() <= 0) {
-            addressRepository.save(student.getAddress());
+        if (student.getAddress() != null) {
+            Long addrId = student.getAddress().getId();
+            if (addrId == null || addrId == 0) {
+                addressRepository.save(student.getAddress());
+            } else if (!addressRepository.existsById(addrId)) {
+                addressRepository.save(student.getAddress());
+            }
+        }
+        if (student.getAccount() != null) {
+            Long accId = student.getAccount().getId();
+            if (accId == null || accId == 0) {
+                accountRepository.save(student.getAccount());
+            } else if (!accountRepository.existsById(accId)) {
+                accountRepository.save(student.getAccount());
+            }
         }
         studentRepository.save(student);
         return new ResponseEntity<Student>(student, HttpStatus.CREATED);
@@ -50,7 +68,20 @@ public class StudentRESTController {
             System.out.println("Student not found!");
             return new ResponseEntity<Student>(HttpStatus.NOT_FOUND);
         }
+        
+        Long addressId = student.getAddress() != null ? student.getAddress().getId() : null;
+        Long accountId = student.getAccount() != null ? student.getAccount().getId() : null;
+        
         studentRepository.deleteById(id);
+        
+        if (addressId != null && !studentRepository.existsByAddressId(addressId)) {
+            addressRepository.deleteById(addressId);
+        }
+        
+        if (accountId != null && !studentRepository.existsByAccountId(accountId)) {
+            accountRepository.deleteById(accountId);
+        }
+        
         return new ResponseEntity<Student>(HttpStatus.NO_CONTENT);
     }
 
@@ -100,11 +131,26 @@ public class StudentRESTController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    // Delete all
-    public void deleteAllStudents() {
-        studentRepository.deleteAll();
-        ResponseEntity.noContent();
-        return;
+    public ResponseEntity<Void> deleteAllStudents() {
+        List<Long> ids = studentRepository.findAll().stream().map(Student::getId).toList();
+        for (Long id : ids) {
+            var studentOpt = studentRepository.findById(id);
+            if (studentOpt.isPresent()) {
+                Student student = studentOpt.get();
+                Long addressId = student.getAddress() != null ? student.getAddress().getId() : null;
+                Long accountId = student.getAccount() != null ? student.getAccount().getId() : null;
+                
+                studentRepository.deleteById(id);
+                
+                if (addressId != null && !studentRepository.existsByAddressId(addressId)) {
+                    addressRepository.deleteById(addressId);
+                }
+                if (accountId != null && !studentRepository.existsByAccountId(accountId)) {
+                    accountRepository.deleteById(accountId);
+                }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private void partialUpdate(Student student, Map<String, Object> updates) {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.models.Address;
 import com.example.demo.repository.AddressRepository;
+import com.example.demo.repository.StudentRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,12 @@ import org.springframework.http.ResponseEntity;
 @RequestMapping("addresses")
 public class AddressRESTController {
     private AddressRepository addressRepository;
+    private StudentRepository studentRepository;
 
     @Autowired
-    public AddressRESTController(AddressRepository addressRepository) {
+    public AddressRESTController(AddressRepository addressRepository, StudentRepository studentRepository) {
         this.addressRepository = addressRepository;
+        this.studentRepository = studentRepository;
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -63,6 +66,9 @@ public class AddressRESTController {
         if (address == null) {
             return new ResponseEntity<Address>(HttpStatus.NOT_FOUND);
         }
+        if (studentRepository.existsByAddressId(id)) {
+            return new ResponseEntity<Address>(HttpStatus.CONFLICT);
+        }
         addressRepository.deleteById(id);
         return new ResponseEntity<Address>(HttpStatus.NO_CONTENT);
     }
@@ -89,10 +95,13 @@ public class AddressRESTController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    public void deleteAllAddresses() {
-        addressRepository.deleteAll();
-        ResponseEntity.noContent();
-        return;
+    public ResponseEntity<Void> deleteAllAddresses() {
+        for (Address a : addressRepository.findAll()) {
+            if (!studentRepository.existsByAddressId(a.getId())) {
+                addressRepository.deleteById(a.getId());
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private void partialUpdate(Address address, Map<String, Object> updates) {

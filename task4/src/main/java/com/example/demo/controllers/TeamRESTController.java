@@ -89,10 +89,13 @@ public class TeamRESTController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.DELETE)
-    public void deleteAllTeams() {
-        teamRepository.deleteAll();
-        ResponseEntity.noContent();
-        return;
+    public ResponseEntity<Void> deleteAllTeams() {
+        List<Long> ids = teamRepository.findAll().stream()
+            .map(Team::getId).toList();
+        for (Long id : ids) {
+            teamRepository.deleteById(id);
+        }
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     private void partialUpdate(Team team, Map<String, Object> updates) {
