@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("students")
 public class StudentRESTController {
     private StudentRepository studentRepository;
@@ -93,12 +95,11 @@ public class StudentRESTController {
         return new ResponseEntity<Student>(student, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
     // Delete all
-    public void deleteAllStudents() {
+    public ResponseEntity<Student> deleteAllStudents() {
         studentRepository.deleteAll();
-        ResponseEntity.noContent();
-        return;
+        return ResponseEntity.noContent().build();
     }
 
     private void partialUpdate(Student student, Map<String, Object> updates) {

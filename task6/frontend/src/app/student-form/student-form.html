@@ -1,1 +1,61 @@
-<p>student-form works!</p>
+<h2>Students</h2>
+<form>
+  <label>Student firstname: </label>
+  <input #studentFirstName />
+  <label>Student lastname: </label>
+  <input #studentLastName />
+  <label>Student email: </label>
+  <input #studentEmail />
+  <label>Student telephone: </label>
+  <input #studentTelephone />
+
+  <!-- (click) passes input value to add() and then clears the input -->
+  <button
+    type="button"
+    (click)="
+      add(
+        studentFirstName.value,
+        studentLastName.value,
+        studentEmail.value,
+        studentTelephone.value
+      );
+      studentFirstName.value = '';
+      studentLastName.value = '';
+      studentEmail.value = '';
+      studentTelephone.value = ''
+    "
+  >
+    Add new student
+  </button>
+</form>
+@for (student of studentList(); track student.id; let isFirst = $first; let
+isLast = $last) { @if (isFirst) {
+<h2>The list of students:</h2>
+}
+<li>
+  {{ student.id }} {{ student.firstName }} {{ student.lastName }} {{
+  student.email }} {{ student.number}}
+  <button title="delete" (click)="delete(student)">Delete</button>
+  <button
+    title="update"
+    (click)="
+        update(
+          studentFirstName.value,
+          studentLastName.value,
+          studentEmail.value,
+          studentTelephone.value,
+          student
+        );
+        studentFirstName.value = '';
+        studentLastName.value = '';
+        studentEmail.value = '';
+        studentTelephone.value = ''
+      "
+  >
+    Update
+  </button>
+</li>
+@if (isLast) {
+<br />
+<button title="delete all" (click)="deleteAll()">delete all</button>
+} } @empty { The collection is empty. }
