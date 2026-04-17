@@ -74,14 +74,13 @@ public class StudentRESTController {
     }
 
     @RequestMapping(method = RequestMethod.PUT)
-    // Substitite collection
-    public void substituteCollection(@RequestBody List<Student> students) {
-        deleteAllStudents();
+    // Substitute collection
+    public List<Student> substituteCollection(@RequestBody List<Student> students) {
+        studentRepository.deleteAll();
         for (Student student : students) {
             studentRepository.save(student);
         }
-        ResponseEntity.ok();
-        return;
+        return studentRepository.findAll();
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)

@@ -131,4 +131,26 @@ export class StudentForm implements OnInit {
       });
     }
   }
+
+  replaceAll(input: string): void {
+    const students: Student[] = input
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const parts = line.trim().split(/\s+/);
+        return {
+          firstName: parts[0] || '',
+          lastName: parts[1] || '',
+          email: parts[2] || '',
+          number: parts[3] || ''
+        } as Student;
+      });
+    this.studentService.replaceAllStudents(students).subscribe({
+      next: (newList) => {
+        this.studentList.set(newList);
+      },
+      error: () => {},
+      complete: () => {},
+    });
+  }
 }

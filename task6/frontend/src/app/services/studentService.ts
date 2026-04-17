@@ -87,6 +87,16 @@ export class StudentService {
       );
   }
 
+  /** PUT: replace all students */
+  replaceAllStudents(students: Student[]): Observable<Student[]> {
+    return this.http
+      .put<Student[]>(this.studentsUrl, students, httpOptions)
+      .pipe(
+        tap(() => this.log(`replaced all students`)),
+        catchError(this.handleError<Student[]>("replaceAllStudents")),
+      );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

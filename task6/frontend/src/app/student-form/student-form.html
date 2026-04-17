@@ -28,10 +28,13 @@
     Add new student
   </button>
 </form>
-@for (student of studentList(); track student.id; let isFirst = $first; let
-isLast = $last) { @if (isFirst) {
+<h3>Bulk Replace All (one line per student, space separated: firstName lastName email number)</h3>
+<textarea #bulkInput rows="5" cols="50" placeholder="John Doe john@example.com 123
+Jane Doe jane@example.com 456"></textarea>
+<button type="button" (click)="replaceAll(bulkInput.value)">Replace All</button>
+<button title="delete all" (click)="deleteAll()">delete all</button>
 <h2>The list of students:</h2>
-}
+@for (student of studentList(); track student.id) {
 <li>
   {{ student.id }} {{ student.firstName }} {{ student.lastName }} {{
   student.email }} {{ student.number}}
@@ -73,7 +76,4 @@ isLast = $last) { @if (isFirst) {
     Patch
   </button>
 </li>
-@if (isLast) {
-<br />
-<button title="delete all" (click)="deleteAll()">delete all</button>
-} } @empty { The collection is empty. }
+} @empty { The collection is empty. }
