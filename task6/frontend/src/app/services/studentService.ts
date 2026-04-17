@@ -75,6 +75,18 @@ export class StudentService {
       );
   }
 
+  /** PATCH: partial update the student on the server */
+  patchStudent(id: number, updates: Partial<Student>): Observable<Student> {
+    return this.http
+      .patch<Student>(`${this.studentsUrl}/${id}`, updates, httpOptions)
+      .pipe(
+        tap((studentUpdated: Student) =>
+          this.log(`patched student id=${studentUpdated.id}`),
+        ),
+        catchError(this.handleError<any>("patchStudent")),
+      );
+  }
+
   /**
    * Handle Http operation that failed.
    * Let the app continue.

@@ -70,7 +70,7 @@ public class StudentRESTController {
             return new ResponseEntity<Student>(HttpStatus.NOT_FOUND);
         }
         partialUpdate(student, updates);
-        return new ResponseEntity<Student>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<Student>(student, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.PUT)

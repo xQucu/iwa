@@ -54,6 +54,24 @@ isLast = $last) { @if (isFirst) {
   >
     Update
   </button>
+  <button
+    title="patch"
+    (click)="
+        patch(
+          studentFirstName.value,
+          studentLastName.value,
+          studentEmail.value,
+          studentTelephone.value,
+          student
+        );
+        studentFirstName.value = '';
+        studentLastName.value = '';
+        studentEmail.value = '';
+        studentTelephone.value = ''
+      "
+  >
+    Patch
+  </button>
 </li>
 @if (isLast) {
 <br />

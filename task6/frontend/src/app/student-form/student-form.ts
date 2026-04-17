@@ -101,4 +101,34 @@ export class StudentForm implements OnInit {
         });
     }
   }
+
+  patch(
+    firstName: string,
+    lastName: string,
+    email: string,
+    number: string,
+    chosenToUpdateStudent: Student,
+  ): void {
+    let id = chosenToUpdateStudent.id;
+    const updates: Partial<Student> = {};
+    if (firstName.trim()) updates.firstName = firstName.trim();
+    if (lastName.trim()) updates.lastName = lastName.trim();
+    if (email.trim()) updates.email = email.trim();
+    if (number.trim()) updates.number = number.trim();
+    if (id != undefined && Object.keys(updates).length > 0) {
+      this.studentService.patchStudent(id, updates).subscribe({
+        next: (updatedStudent: Student) => {
+          this.studentList.update((currentStudents) =>
+            currentStudents.map((currentStudent) =>
+              currentStudent.id === updatedStudent.id
+                ? updatedStudent
+                : currentStudent,
+            ),
+          );
+        },
+        error: () => {},
+        complete: () => {},
+      });
+    }
+  }
 }
