@@ -17,6 +17,26 @@ export class StudentForm implements OnInit {
     this.getStudents();
   }
 
+  getStudent(
+    id: number,
+    firstNameInput: HTMLInputElement,
+    lastNameInput: HTMLInputElement,
+    emailInput: HTMLInputElement,
+    telephoneInput: HTMLInputElement,
+  ): void {
+    if (!id) return;
+    this.studentService.getStudent(id).subscribe({
+      next: (newStudent) => {
+        firstNameInput.value = newStudent.firstName || "";
+        lastNameInput.value = newStudent.lastName || "";
+        emailInput.value = newStudent.email || "";
+        telephoneInput.value = newStudent.number || "";
+      },
+      error: () => {},
+      complete: () => {},
+    });
+  }
+
   getStudents(): void {
     this.studentService.getStudents().subscribe({
       next: (newStudentList) => {
@@ -134,15 +154,15 @@ export class StudentForm implements OnInit {
 
   replaceAll(input: string): void {
     const students: Student[] = input
-      .split('\n')
-      .filter(line => line.trim())
-      .map(line => {
+      .split("\n")
+      .filter((line) => line.trim())
+      .map((line) => {
         const parts = line.trim().split(/\s+/);
         return {
-          firstName: parts[0] || '',
-          lastName: parts[1] || '',
-          email: parts[2] || '',
-          number: parts[3] || ''
+          firstName: parts[0] || "",
+          lastName: parts[1] || "",
+          email: parts[2] || "",
+          number: parts[3] || "",
         } as Student;
       });
     this.studentService.replaceAllStudents(students).subscribe({
