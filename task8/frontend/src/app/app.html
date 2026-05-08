@@ -1,0 +1,13 @@
+<app-navbar />
+<router-outlet />
+
+<h1>Hello, {{ title() }}</h1>
+<p>Congratulations! Your app is running. 🎉</p>
+
+@if (authority() === 'user' || authority()==="admin") {
+<a routerLink="user">User page</a> }
+<br />
+@if (authority() === 'admin') { <a routerLink="admin">Admin page</a> }
+<br />
+@if (!authority()) { <a routerLink="auth/login">Login</a> }
+<br />

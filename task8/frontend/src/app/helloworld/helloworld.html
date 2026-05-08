@@ -1,0 +1,20 @@
+<p>helloworld works!</p>
+
+@if(info.token != '{}') {
+<div>
+  <h5 class="text-primary">Your Information</h5>
+  <p>
+    <strong>Username:</strong> {{info.username}}<br/>
+    <strong>Roles:</strong> {{info.authorities}}<br />
+    <strong>Token:</strong> {{info.token}}.
+  </p>
+  <button class="btn btn-secondary" (click)="logout()">Logout</button>
+</div>
+} @else {
+  <ng-container [ngTemplateOutlet]="loggedOut"></ng-container>
+}
+
+<ng-template #loggedOut>
+  Please login.
+</ng-template>
+

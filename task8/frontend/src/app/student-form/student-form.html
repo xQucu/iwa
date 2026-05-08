@@ -1,0 +1,99 @@
+<h2>Students</h2>
+<form>
+  <label>Student firstname: </label>
+  <input #studentFirstName />
+  <label>Student lastname: </label>
+  <input #studentLastName />
+  <label>Student email: </label>
+  <input #studentEmail />
+  <label>Student telephone: </label>
+  <input #studentTelephone />
+
+  <!-- (click) passes input value to add() and then clears the input -->
+  <button
+    type="button"
+    (click)="
+      add(
+        studentFirstName.value,
+        studentLastName.value,
+        studentEmail.value,
+        studentTelephone.value
+      );
+      studentFirstName.value = '';
+      studentLastName.value = '';
+      studentEmail.value = '';
+      studentTelephone.value = ''
+    "
+  >
+    Add new student
+  </button>
+</form>
+<h3>
+  Bulk Replace All (one line per student, space separated: firstName lastName
+  email number)
+</h3>
+<textarea
+  #bulkInput
+  rows="5"
+  cols="50"
+  placeholder="John Doe john@example.com 123
+Jane Doe jane@example.com 456"
+></textarea>
+<button type="button" (click)="replaceAll(bulkInput.value)">Replace All</button>
+<button title="delete all" (click)="deleteAll()">delete all</button>
+<h2>The list of students:</h2>
+@for (student of studentList(); track student.id) {
+<li>
+  {{ student.id }} {{ student.firstName }} {{ student.lastName }} {{
+  student.email }} {{ student.number}}
+  <button title="delete" (click)="delete(student)">Delete</button>
+  <button
+    title="update"
+    (click)="
+        update(
+          studentFirstName.value,
+          studentLastName.value,
+          studentEmail.value,
+          studentTelephone.value,
+          student
+        );
+        studentFirstName.value = '';
+        studentLastName.value = '';
+        studentEmail.value = '';
+        studentTelephone.value = ''
+      "
+  >
+    Update
+  </button>
+  <button
+    title="load"
+    (click)="
+        studentFirstName.value = '';
+        studentLastName.value = '';
+        studentEmail.value = '';
+        studentTelephone.value = '';
+        getStudent(student.id!, studentFirstName, studentLastName, studentEmail, studentTelephone)
+      "
+  >
+    Load Student data
+  </button>
+  <button
+    title="patch"
+    (click)="
+        patch(
+          studentFirstName.value,
+          studentLastName.value,
+          studentEmail.value,
+          studentTelephone.value,
+          student
+        );
+        studentFirstName.value = '';
+        studentLastName.value = '';
+        studentEmail.value = '';
+        studentTelephone.value = ''
+      "
+  >
+    Patch
+  </button>
+</li>
+} @empty { The collection is empty. }
