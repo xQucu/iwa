@@ -53,27 +53,43 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
-                        // Next line iss added to allow Spring reach .jsp pages
-                        // that should be visible to all users according to the following rules
-                        // The reason is that in 6.0, the authorization filter is run for all dispatcher
-                        // types,
-                        // including FORWARD. This means that the JSP that is forwarded, also needs to
-                        // be permitted.
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/student").permitAll()
                         .requestMatchers("/addStudent.html").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/students/**").permitAll()
-                        .requestMatchers("/error").permitAll() // this enables the body in the exception responses
+                        .requestMatchers("/error").permitAll()
+
+                        // Students: Read public, Write/Delete ADMIN
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/students/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/students/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/students/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/students/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/students/**").hasRole("ADMIN")
+
+                        // Teams: Read public, Write/Delete ADMIN
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/teams/**").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/teams/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/teams/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PATCH, "/teams/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/teams/**").hasRole("ADMIN")
+
+                        // Accounts & Addresses: Full ADMIN access, USER can read
+                        .requestMatchers("/accounts/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/accounts/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/accounts/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/accounts/**").hasRole("ADMIN")
+
+                        .requestMatchers("/addresses/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/addresses/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/addresses/**").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/addresses/**").hasRole("ADMIN")
+
+                        // Example Security
                         .requestMatchers("/exampleSecurity/user").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/exampleSecurity/admin").hasRole("ADMIN")
+
                         .anyRequest().authenticated())
-                // To disable anonymous user authentication. This forces all users to
-                // authenticate, blocking access
-                // to public, non-credentialed sessions and ensuring only authorized users
-                // access resources.
-                // .anonymous((anonymous) -> anonymous.disable())
                 .exceptionHandling(unauthorized -> unauthorized
                         .authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session
