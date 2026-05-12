@@ -1,5 +1,17 @@
 <p>helloworld works!</p>
 
+<div (mouseenter)="onEnter()">Mouse Enter Here</div>
+<div>{{onenterText()}}</div>
+
+<input (input)="onInput($any($event.target).value)" />
+<div>{{oninputText()}}</div>
+
+<div (mouseover)="onHover()">Mouse Hover Here</div>
+<div>{{onhoverText()}}</div>
+
+<div (mousemove)="onMouseMove($event)">Mouse Move Here</div>
+<div>X: {{mousePosition().x}}, Y: {{mousePosition().y}}</div>
+
 @if(info.token != '{}') {
 <div>
   <h5 class="text-primary">Your Information</h5>
