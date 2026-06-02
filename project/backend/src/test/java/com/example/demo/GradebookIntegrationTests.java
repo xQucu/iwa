@@ -24,6 +24,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -156,5 +158,62 @@ public class GradebookIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(gradeRequest)))
                 .andExpect(status().isForbidden());
+
+        // 10. Teacher updates the subject's name from "Mathematics" to "Advanced Mathematics"
+        savedMath.setName("Advanced Mathematics");
+        mockMvc.perform(put("/subjects/" + savedMath.getId())
+                .header("Authorization", "Bearer " + teacherToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(savedMath)))
+                .andExpect(status().isOk());
+
+        // 11. Student tries to update the subject's name (should be FORBIDDEN - 403)
+        mockMvc.perform(put("/subjects/" + savedMath.getId())
+                .header("Authorization", "Bearer " + studentToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(savedMath)))
+                .andExpect(status().isForbidden());
+
+        // 12. Teacher modifies the assigned grade (change value to 4.5 and description to "Correction after review")
+        com.example.demo.models.Grade grade = gradeRepository.findAll().get(0);
+        GradeRequest modifyRequest = new GradeRequest(
+                studentUser.getId(),
+                savedMath.getId(),
+                4.5,
+                "Correction after review"
+        );
+        mockMvc.perform(put("/grades/" + grade.getId())
+                .header("Authorization", "Bearer " + teacherToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(modifyRequest)))
+                .andExpect(status().isOk());
+
+        // 13. Student tries to modify the grade (should be FORBIDDEN - 403)
+        mockMvc.perform(put("/grades/" + grade.getId())
+                .header("Authorization", "Bearer " + studentToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(modifyRequest)))
+                .andExpect(status().isForbidden());
+
+        // Verify the grade was updated for the student
+        String studentGradesJsonAfterUpdate = mockMvc.perform(get("/grades")
+                .header("Authorization", "Bearer " + studentToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(studentGradesJsonAfterUpdate.contains("Correction after review"));
+        assertTrue(studentGradesJsonAfterUpdate.contains("Advanced Mathematics"));
+        assertTrue(studentGradesJsonAfterUpdate.contains("4.5"));
+
+        // 14. Teacher deletes the subject (should trigger programmatic cascade delete of grades)
+        mockMvc.perform(delete("/subjects/" + savedMath.getId())
+                .header("Authorization", "Bearer " + teacherToken))
+                .andExpect(status().isNoContent());
+
+        // Verify grades list is now empty
+        String studentGradesJsonAfterDelete = mockMvc.perform(get("/grades")
+                .header("Authorization", "Bearer " + studentToken))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertTrue(studentGradesJsonAfterDelete.equals("[]"));
     }
 }
