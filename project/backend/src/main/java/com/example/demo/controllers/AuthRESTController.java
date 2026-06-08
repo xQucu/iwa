@@ -76,29 +76,18 @@ public class AuthRESTController {
         // Create user account
         User user = new User(signUpRequest.getUsername(), passwordEncoder.encode(signUpRequest.getPassword()));
 
-        Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null || strRoles.isEmpty()) {
+        if (signUpRequest.getUsername().equalsIgnoreCase("admin")) {
+            Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
+                    .orElseThrow(() -> new RuntimeException("Fail -> Cause: Admin Role not found."));
+            roles.add(adminRole);
+        } else {
             Role studentRole = roleRepository.findByName(RoleName.ROLE_STUDENT)
                     .orElseThrow(() -> new RuntimeException("Fail -> Cause: Student Role not found."));
             roles.add(studentRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role.toLowerCase()) {
-                    case "teacher":
-                        Role teacherRole = roleRepository.findByName(RoleName.ROLE_TEACHER)
-                                .orElseThrow(() -> new RuntimeException("Fail -> Cause: Teacher Role not found."));
-                        roles.add(teacherRole);
-                        break;
-                    case "student":
-                    default:
-                        Role studentRole = roleRepository.findByName(RoleName.ROLE_STUDENT)
-                                .orElseThrow(() -> new RuntimeException("Fail -> Cause: Student Role not found."));
-                        roles.add(studentRole);
-                }
-            });
         }
+
 
         user.setRoles(roles);
         userRepository.save(user);

@@ -8,17 +8,17 @@ import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, NgTemplateOutlet, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
+
 
 export class Login implements OnInit {
   form: any = {};
   token?: string;
   isLoggedIn = signal(false);
   isLoginFailed = signal(false);
-  errorMessage = signal<string>('');
   roles: string[] = [];
   private loginInfo?: LoginInfo;
 
@@ -55,10 +55,10 @@ export class Login implements OnInit {
       ,
       error: (error) => {
         console.log(error);
-        this.errorMessage.set(error.error.message);
         this.isLoginFailed.set(true);
       }
     });
+
   }
 
   reloadPage() {

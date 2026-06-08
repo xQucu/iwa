@@ -57,23 +57,17 @@
           }
         </div>
 
-        <div class="form-group">
-          <label for="role">Role</label>
-          <select id="role" name="role" [(ngModel)]="form.role" required>
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-          </select>
-        </div>
-
         <button type="submit" class="btn btn-primary" [disabled]="!f.form.valid" style="width: 100%; margin-top: 0.5rem;">
           Register
         </button>
 
+
         @if (f.submitted && isSignUpFailed()) {
           <div class="alert alert-danger" style="margin-top: 1rem;">
-            Registration failed: {{ errorMessage() }}
+            Registration failed!
           </div>
         }
+
       </form>
 
       <div class="auth-footer">

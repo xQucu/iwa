@@ -1,87 +1,62 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { GradeService } from '../services/grade.service';
-import { SubjectService } from '../services/subject.service';
-import { Subject } from '../models/subject';
-import { Grade } from '../models/grade';
+import { UserService } from '../services/user-service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-admin',
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
 export class Admin implements OnInit {
-  grades = signal<Grade[]>([]);
-  subjects = signal<Subject[]>([]);
+  users = signal<User[]>([]);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
 
-  studentIdInput = signal<number | null>(null);
-  subjectIdInput = signal<number | null>(null);
-  valueInput = signal<number>(5.0);
-  descriptionInput = signal<string>('');
-
-  private gradeService = inject(GradeService);
-  private subjectService = inject(SubjectService);
+  private userService = inject(UserService);
 
   ngOnInit() {
-    this.loadData();
+    this.loadUsers();
   }
 
-  loadData() {
-    this.gradeService.getGrades().subscribe({
-      next: (data) => this.grades.set(data),
-      error: (err) => console.error(err)
-    });
-    this.subjectService.getSubjects().subscribe({
-      next: (data) => {
-        this.subjects.set(data);
-        if (data.length > 0) {
-          this.subjectIdInput.set(data[0].id || null);
-        }
-      },
-      error: (err) => console.error(err)
-    });
-  }
-
-  onSubmit() {
-    const sId = this.studentIdInput();
-    const subId = this.subjectIdInput();
-    const val = this.valueInput();
-    const desc = this.descriptionInput();
-
-    if (!sId || !subId) {
-      this.errorMessage.set('Please provide a Student ID and select a Subject.');
-      return;
-    }
-
-    this.gradeService.addGrade({
-      studentId: sId,
-      subjectId: subId,
-      value: val,
-      description: desc
-    }).subscribe({
-      next: (newGrade) => {
-        if (newGrade && newGrade.id) {
-          this.successMessage.set('Grade added successfully!');
-          this.errorMessage.set('');
-          this.grades.update(list => [...list, newGrade]);
-          // Reset form fields except subject
-          this.studentIdInput.set(null);
-          this.descriptionInput.set('');
-          setTimeout(() => this.successMessage.set(''), 3000);
-        } else {
-          this.errorMessage.set('Failed to add grade. Make sure student ID is valid.');
-        }
-      },
+  loadUsers() {
+    this.userService.getUsers().subscribe({
+      next: (data) => this.users.set(data),
       error: (err) => {
-        this.errorMessage.set('Error submitting grade.');
+        this.errorMessage.set('Failed to load users.');
         console.error(err);
       }
     });
   }
+
+  hasRole(user: User, roleName: string): boolean {
+    return user.roles.some((role) => role.name === roleName);
+  }
+
+  toggleRole(user: User) {
+    let targetRole = '';
+    if (this.hasRole(user, 'ROLE_STUDENT')) {
+      targetRole = 'teacher';
+    } else if (this.hasRole(user, 'ROLE_TEACHER')) {
+      targetRole = 'student';
+    } else {
+      return; // Can't toggle admin
+    }
+
+    this.userService.updateUserRole(user.id, targetRole).subscribe({
+      next: (updatedUser) => {
+        if (updatedUser) {
+          this.users.update((list) =>
+            list.map((u) => (u.id === updatedUser.id ? updatedUser : u))
+          );
+          this.successMessage.set(`Updated role for ${user.username} successfully.`);
+          setTimeout(() => this.successMessage.set(''), 3000);
+        } else {
+          this.errorMessage.set('Failed to update user role.');
+        }
+      },
+      error: (err) => console.error(err)
+    });
+  }
 }
-
-

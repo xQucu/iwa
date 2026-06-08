@@ -14,12 +14,17 @@
 
   @if (isLoggedIn()) {
     <div class="dashboard-nav">
+      @if (isAdmin()) {
+        <a routerLink="admin" class="nav-link">Admin Dashboard (Roles)</a>
+      }
       @if (isTeacher()) {
-        <a routerLink="admin" class="nav-link">Teacher Dashboard (Grades)</a>
-      } @else {
+        <a routerLink="teacher" class="nav-link">Teacher Dashboard (Grades)</a>
+      }
+      @if (!isAdmin() && !isTeacher()) {
         <a routerLink="user" class="nav-link">View My Grades</a>
       }
     </div>
+
 
     <main class="dashboard-content">
       <section class="subjects-section">

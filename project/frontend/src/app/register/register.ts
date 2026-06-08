@@ -7,17 +7,17 @@ import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, NgTemplateOutlet, RouterLink],
+  imports: [FormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
+
 
 export class Register {
   form: any = {};
   signupInfo?: SignupInfo;
   isSignedUp = signal(false);
   isSignUpFailed = signal(false);
-  errorMessage = signal<string>('');
 
   private authService = inject(AuthService);
 
@@ -27,8 +27,9 @@ export class Register {
     this.signupInfo = new SignupInfo(
       this.form.username,
       this.form.password,
-      [this.form.role || 'student']
+      ['student']
     );
+
 
 
     this.authService.signUp(this.signupInfo).subscribe({
@@ -41,10 +42,10 @@ export class Register {
       ,
       error: (error) => {
         console.log(error);
-        this.errorMessage.set(error.error.message);
         this.isSignUpFailed.set(true);
       }
     });
+
   }
 
 }

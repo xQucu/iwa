@@ -16,6 +16,7 @@ export class StudentForm implements OnInit {
 
   subjectList = signal<Subject[]>([]);
   isTeacher = signal<boolean>(false);
+  isAdmin = signal<boolean>(false);
   isLoggedIn = signal<boolean>(false);
   username = signal<string>("");
 
@@ -25,9 +26,11 @@ export class StudentForm implements OnInit {
       this.username.set(this.tokenStorage.getUsername());
       const roles = this.tokenStorage.getAuthorities();
       this.isTeacher.set(roles.includes("ROLE_TEACHER"));
+      this.isAdmin.set(roles.includes("ROLE_ADMIN"));
       this.getSubjects();
     }
   }
+
 
   getSubjects(): void {
     this.subjectService.getSubjects().subscribe({
