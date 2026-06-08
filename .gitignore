@@ -5,3 +5,6 @@
 /project/.env
 /project/backend/.env
 /project/frontend/node_modules
+/project/frontend/.angular/cache/21.2.5/task5/vite/deps
+/project/frontend/.angular/cache/21.2.5/task5
+/project/frontend/.angular/cache/21.2.5/task5
