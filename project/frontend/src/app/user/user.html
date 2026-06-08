@@ -1,0 +1,42 @@
+<div class="container">
+  <header class="dashboard-header">
+    <div class="logo">EduPortal - Student Grades</div>
+    <a routerLink="" class="btn btn-secondary">Back to Subjects</a>
+  </header>
+
+  <main class="dashboard-content">
+    <div class="list-card">
+      <h2>My Grades</h2>
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger">{{ errorMessage() }}</div>
+      }
+
+      <div class="table-responsive">
+        <table class="grades-table">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Grade</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (grade of grades(); track grade.id) {
+              <tr>
+                <td><strong>{{ grade.subject.name }}</strong></td>
+                <td><span class="grade-badge">{{ grade.value }}</span></td>
+                <td>{{ grade.description || 'No description' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="3" class="empty-table-message">No grades assigned yet.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+

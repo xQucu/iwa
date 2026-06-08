@@ -1,0 +1,123 @@
+<div class="container">
+  <header class="dashboard-header">
+    <div class="logo">EduPortal - Teacher Dashboard</div>
+    <a routerLink="" class="btn btn-secondary">Back to Subjects</a>
+  </header>
+
+  <main class="dashboard-content">
+    <section class="admin-grid">
+      <!-- Add Grade Form -->
+      <div class="form-card">
+        <h2>Grade a Student</h2>
+        
+        @if (successMessage()) {
+          <div class="alert alert-success">{{ successMessage() }}</div>
+        }
+        @if (errorMessage()) {
+          <div class="alert alert-danger">{{ errorMessage() }}</div>
+        }
+
+        <form (ngSubmit)="onSubmit()" #gradeForm="ngForm" class="grade-form">
+          <div class="form-group">
+            <label for="studentId">Student ID</label>
+            <input 
+              type="number" 
+              id="studentId" 
+              name="studentId" 
+              [ngModel]="studentIdInput()" 
+              (ngModelChange)="studentIdInput.set($event)" 
+              required 
+              placeholder="e.g. 1"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="subjectSelect">Subject</label>
+            <select 
+              id="subjectSelect" 
+              name="subjectSelect" 
+              [ngModel]="subjectIdInput()" 
+              (ngModelChange)="subjectIdInput.set($event)"
+              required
+            >
+              @for (subject of subjects(); track subject.id) {
+                <option [value]="subject.id">{{ subject.name }}</option>
+              } @empty {
+                <option disabled value="">No subjects available</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="gradeValue">Grade Value</label>
+            <select 
+              id="gradeValue" 
+              name="gradeValue" 
+              [ngModel]="valueInput()" 
+              (ngModelChange)="valueInput.set($event)"
+              required
+            >
+              <option [value]="2.0">2.0</option>
+              <option [value]="3.0">3.0</option>
+              <option [value]="3.5">3.5</option>
+              <option [value]="4.0">4.0</option>
+              <option [value]="4.5">4.5</option>
+              <option [value]="5.0">5.0</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description (optional)</label>
+            <input 
+              type="text" 
+              id="description" 
+              name="description" 
+              [ngModel]="descriptionInput()" 
+              (ngModelChange)="descriptionInput.set($event)" 
+              placeholder="e.g. Midterm exam"
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary" [disabled]="!gradeForm.form.valid || subjects().length === 0">
+            Submit Grade
+          </button>
+        </form>
+      </div>
+
+      <!-- Grades List -->
+      <div class="list-card">
+        <h2>Graded History</h2>
+        
+        <div class="table-responsive">
+          <table class="grades-table">
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Username</th>
+                <th>Subject</th>
+                <th>Grade</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (grade of grades(); track grade.id) {
+                <tr>
+                  <td>{{ grade.student.id }}</td>
+                  <td><strong>{{ grade.student.username }}</strong></td>
+                  <td>{{ grade.subject.name }}</td>
+                  <td><span class="grade-badge">{{ grade.value }}</span></td>
+                  <td>{{ grade.description || '-' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty-table-message">No grades have been given yet.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
