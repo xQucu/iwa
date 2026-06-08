@@ -311,6 +311,32 @@
 			"name": "Grades",
 			"item": [
 				{
+					"name": "Teacher Enrolls Student",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{teacherToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/subjects/{{subjectId}}/users/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"subjects",
+								"{{subjectId}}",
+								"users",
+								"{{studentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Teacher Grades Student",
 					"event": [
 						{

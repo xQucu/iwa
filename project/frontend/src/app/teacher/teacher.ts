@@ -5,6 +5,8 @@ import { GradeService } from '../services/grade.service';
 import { SubjectService } from '../services/subject.service';
 import { Subject } from '../models/subject';
 import { Grade } from '../models/grade';
+import { UserService } from '../services/user-service';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-teacher',
@@ -15,6 +17,7 @@ import { Grade } from '../models/grade';
 export class Teacher implements OnInit {
   grades = signal<Grade[]>([]);
   subjects = signal<Subject[]>([]);
+  students = signal<User[]>([]);
   errorMessage = signal<string>('');
   successMessage = signal<string>('');
 
@@ -23,8 +26,46 @@ export class Teacher implements OnInit {
   valueInput = signal<number>(5.0);
   descriptionInput = signal<string>('');
 
+  enrolStudentIdInput = signal<number | null>(null);
+  enrolSubjectIdInput = signal<number | null>(null);
+
+  searchQuery = signal<string>('');
+  sortBy = signal<'student' | 'subject'>('student');
+
+  onSearch(query: string) {
+    this.searchQuery.set(query);
+  }
+
+  sortedGrades() {
+    const list = [...this.grades()];
+    const key = this.sortBy();
+    if (key === 'student') {
+      return list.sort((a, b) => (a.student?.username || '').localeCompare(b.student?.username || ''));
+    } else {
+      return list.sort((a, b) => (a.subject?.name || '').localeCompare(b.subject?.name || ''));
+    }
+  }
+
+  onReset() {
+    this.valueInput.set(5.0);
+    this.descriptionInput.set('');
+    // Restore default selected student and subject if students exist
+    const studentsList = this.students();
+    if (studentsList.length > 0) {
+      this.studentIdInput.set(studentsList[0].id);
+      this.updateInitialSubjectSelection();
+    }
+  }
+
+  filteredSubjectsForList() {
+    const q = this.searchQuery().toLowerCase().trim();
+    if (!q) return this.subjects();
+    return this.subjects().filter(s => s.name.toLowerCase().includes(q));
+  }
+
   private gradeService = inject(GradeService);
   private subjectService = inject(SubjectService);
+  private userService = inject(UserService);
 
   ngOnInit() {
     this.loadData();
@@ -35,15 +76,56 @@ export class Teacher implements OnInit {
       next: (data) => this.grades.set(data),
       error: (err) => console.error(err)
     });
-    this.subjectService.getSubjects().subscribe({
+    this.userService.getUsers().subscribe({
       next: (data) => {
-        this.subjects.set(data);
-        if (data.length > 0) {
-          this.subjectIdInput.set(data[0].id || null);
+        const studentUsers = data.filter(u => u.roles.some(r => r.name === 'ROLE_STUDENT'));
+        this.students.set(studentUsers);
+        if (studentUsers.length > 0) {
+          const firstStudentId = studentUsers[0].id;
+          this.studentIdInput.set(firstStudentId);
+          this.enrolStudentIdInput.set(firstStudentId);
+          this.updateInitialSubjectSelection();
         }
       },
       error: (err) => console.error(err)
     });
+    this.subjectService.getSubjects().subscribe({
+      next: (data) => {
+        this.subjects.set(data);
+        this.updateInitialSubjectSelection();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  filteredSubjectsForSelectedStudent() {
+    const selectedStudentId = this.studentIdInput();
+    if (!selectedStudentId) return [];
+    return this.subjects().filter(subject => 
+      subject.enrolledUsers?.some(user => user.id == selectedStudentId)
+    );
+  }
+
+  onStudentChange(studentId: number) {
+    this.studentIdInput.set(studentId);
+    const filtered = this.filteredSubjectsForSelectedStudent();
+    if (filtered.length > 0) {
+      this.subjectIdInput.set(filtered[0].id || null);
+    } else {
+      this.subjectIdInput.set(null);
+    }
+  }
+
+  updateInitialSubjectSelection() {
+    const studentId = this.studentIdInput();
+    if (studentId && this.subjects().length > 0) {
+      const filtered = this.filteredSubjectsForSelectedStudent();
+      if (filtered.length > 0) {
+        this.subjectIdInput.set(filtered[0].id || null);
+      } else {
+        this.subjectIdInput.set(null);
+      }
+    }
   }
 
   onSubmit() {
@@ -77,6 +159,42 @@ export class Teacher implements OnInit {
       },
       error: (err) => {
         this.errorMessage.set('Error submitting grade.');
+        console.error(err);
+      }
+    });
+  }
+
+  onEnrol() {
+    const studentId = this.enrolStudentIdInput();
+    const subjectId = this.enrolSubjectIdInput();
+    if (!studentId || !subjectId) return;
+
+    this.subjectService.enrolUser(subjectId, studentId).subscribe({
+      next: () => {
+        this.successMessage.set(`Successfully enrolled student ${studentId}.`);
+        this.errorMessage.set('');
+        this.loadData();
+        setTimeout(() => this.successMessage.set(''), 3000);
+      },
+      error: (err) => {
+        this.errorMessage.set(`Failed to enrol student ${studentId}.`);
+        console.error(err);
+      }
+    });
+  }
+
+  onUnenrolForSubject(subjectId?: number, studentId?: number) {
+    if (!studentId || !subjectId) return;
+
+    this.subjectService.unenrolUser(subjectId, studentId).subscribe({
+      next: () => {
+        this.successMessage.set(`Successfully un-enrolled student.`);
+        this.errorMessage.set('');
+        this.loadData();
+        setTimeout(() => this.successMessage.set(''), 3000);
+      },
+      error: (err) => {
+        this.errorMessage.set(`Failed to un-enrol student.`);
         console.error(err);
       }
     });

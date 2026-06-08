@@ -3,6 +3,8 @@ import { RouterLink } from "@angular/router";
 import { Subject } from "../models/subject";
 import { SubjectService } from "../services/subject.service";
 import { TokenStorageService } from "../auth/token-storage-service";
+import { GradeService } from "../services/grade.service";
+import { Grade } from "../models/grade";
 
 @Component({
   selector: "app-student-form",
@@ -13,8 +15,10 @@ import { TokenStorageService } from "../auth/token-storage-service";
 export class StudentForm implements OnInit {
   private subjectService = inject(SubjectService);
   private tokenStorage = inject(TokenStorageService);
+  private gradeService = inject(GradeService);
 
   subjectList = signal<Subject[]>([]);
+  grades = signal<Grade[]>([]);
   isTeacher = signal<boolean>(false);
   isAdmin = signal<boolean>(false);
   isLoggedIn = signal<boolean>(false);
@@ -28,7 +32,18 @@ export class StudentForm implements OnInit {
       this.isTeacher.set(roles.includes("ROLE_TEACHER"));
       this.isAdmin.set(roles.includes("ROLE_ADMIN"));
       this.getSubjects();
+      if (!this.isTeacher() && !this.isAdmin()) {
+        this.gradeService.getGrades().subscribe({
+          next: (data) => this.grades.set(data),
+          error: (err) => console.error(err)
+        });
+      }
     }
+  }
+
+  getGradesForSubject(subjectId?: number): Grade[] {
+    if (subjectId === undefined) return [];
+    return this.grades().filter(g => g.subject.id === subjectId);
   }
 
 

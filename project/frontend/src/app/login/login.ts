@@ -4,7 +4,7 @@ import {AuthService} from '../auth/auth-service';
 import {TokenStorageService} from '../auth/token-storage-service';
 import {FormsModule} from '@angular/forms';
 import {NgTemplateOutlet} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +24,7 @@ export class Login implements OnInit {
 
   private authService = inject(AuthService);
   private tokenStorage = inject(TokenStorageService);
+  private router = inject(Router);
 
   // older approach/syntax for DI that still works
   // constructor(private authService: AuthService, private tokenStorage: TokenStorageService) { }
@@ -32,6 +33,7 @@ export class Login implements OnInit {
     if (this.tokenStorage.getToken() != null && this.tokenStorage.getToken() != '{}') {
       this.isLoggedIn.set(true);
       this.roles = this.tokenStorage.getAuthorities();
+      this.router.navigate(['']);
     }
   }
 

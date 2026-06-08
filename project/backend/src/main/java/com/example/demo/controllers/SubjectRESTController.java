@@ -18,8 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.models.Subject;
 import com.example.demo.models.Grade;
+import com.example.demo.models.User;
 import com.example.demo.repository.SubjectRepository;
 import com.example.demo.repository.GradeRepository;
+import com.example.demo.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.example.demo.security.services.UserPrinciple;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -32,14 +38,33 @@ public class SubjectRESTController {
     @Autowired
     private GradeRepository gradeRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @GetMapping
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMIN')")
     public List<Subject> getAllSubjects() {
-        return subjectRepository.findAll();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrinciple userDetails = (UserPrinciple) auth.getPrincipal();
+        boolean isStudent = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
+        boolean isTeacherOrAdmin = userDetails.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_TEACHER") || a.getAuthority().equals("ROLE_ADMIN"));
+
+        List<Subject> allSubjects = subjectRepository.findAll();
+        
+        if (isTeacherOrAdmin) {
+            return allSubjects;
+        } else {
+            // Student: filter only enrolled subjects
+            return allSubjects.stream()
+                .filter(s -> s.getEnrolledUsers().stream().anyMatch(u -> u.getId().equals(userDetails.getId())))
+                .collect(Collectors.toList());
+        }
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> addSubject(@Valid @RequestBody Subject subject) {
         if (subjectRepository.existsByName(subject.getName())) {
             return new ResponseEntity<>("Subject with this name already exists", HttpStatus.BAD_REQUEST);
@@ -49,7 +74,7 @@ public class SubjectRESTController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> updateSubject(@PathVariable("id") Long id, @Valid @RequestBody Subject subjectDetails) {
         Subject subject = subjectRepository.findById(id).orElse(null);
         if (subject == null) {
@@ -68,7 +93,7 @@ public class SubjectRESTController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @Transactional
     public ResponseEntity<?> deleteSubject(@PathVariable("id") Long id) {
         Subject subject = subjectRepository.findById(id).orElse(null);
@@ -82,5 +107,42 @@ public class SubjectRESTController {
 
         subjectRepository.delete(subject);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{subjectId}/users/{userId}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @Transactional
+    public ResponseEntity<?> enrollUser(@PathVariable("subjectId") Long subjectId, @PathVariable("userId") Long userId) {
+        Subject subject = subjectRepository.findById(subjectId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        if (subject == null || user == null) {
+            return new ResponseEntity<>("Subject or User not found", HttpStatus.NOT_FOUND);
+        }
+
+        subject.getEnrolledUsers().add(user);
+        subjectRepository.save(subject);
+        return ResponseEntity.ok(subject);
+    }
+
+    @DeleteMapping("/{subjectId}/users/{userId}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @Transactional
+    public ResponseEntity<?> unenrollUser(@PathVariable("subjectId") Long subjectId, @PathVariable("userId") Long userId) {
+        Subject subject = subjectRepository.findById(subjectId).orElse(null);
+        User user = userRepository.findById(userId).orElse(null);
+        if (subject == null || user == null) {
+            return new ResponseEntity<>("Subject or User not found", HttpStatus.NOT_FOUND);
+        }
+
+        subject.getEnrolledUsers().remove(user);
+        subjectRepository.save(subject);
+
+        // Delete grades for this user in this subject
+        List<Grade> grades = gradeRepository.findBySubjectId(subjectId).stream()
+                .filter(g -> g.getStudent().getId().equals(userId))
+                .collect(Collectors.toList());
+        gradeRepository.deleteAll(grades);
+
+        return ResponseEntity.ok(subject);
     }
 }

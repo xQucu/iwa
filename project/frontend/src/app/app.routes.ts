@@ -19,7 +19,7 @@ export const routes: Routes = [
     path: "teacher",
     component: Teacher,
     canActivate: [RoleGuard],
-    data: { roles: ["ROLE_TEACHER"] },
+    data: { roles: ["ROLE_TEACHER", "ROLE_ADMIN"] },
   },
   {
     path: "admin",

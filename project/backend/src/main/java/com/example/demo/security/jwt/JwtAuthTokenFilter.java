@@ -43,6 +43,8 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+            logger.warn("User from token not found in DB: " + e.getMessage());
         } catch (Exception e) {
             logger.error("Can NOT set user authentication -> Message: {}", e);
         }

@@ -17,11 +17,8 @@
       @if (isAdmin()) {
         <a routerLink="admin" class="nav-link">Admin Dashboard (Roles)</a>
       }
-      @if (isTeacher()) {
+      @if (isTeacher() || isAdmin()) {
         <a routerLink="teacher" class="nav-link">Teacher Dashboard (Grades)</a>
-      }
-      @if (!isAdmin() && !isTeacher()) {
-        <a routerLink="user" class="nav-link">View My Grades</a>
       }
     </div>
 
@@ -30,7 +27,7 @@
       <section class="subjects-section">
         <h2>Academic Subjects</h2>
 
-        @if (isTeacher()) {
+        @if (isTeacher() || isAdmin()) {
           <div class="form-card">
             <h3>Add New Subject</h3>
             <div class="input-group">
@@ -47,7 +44,7 @@
           <ul class="subject-list">
             @for (subject of subjectList(); track subject.id) {
               <li class="subject-item">
-                @if (isTeacher()) {
+                @if (isTeacher() || isAdmin()) {
                   <div class="subject-edit-mode">
                     <input #editName [value]="subject.name" class="edit-input" />
                     <div class="button-group">
@@ -60,7 +57,16 @@
                     </div>
                   </div>
                 } @else {
-                  <span class="subject-name">{{ subject.name }}</span>
+                  <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <span class="subject-name">{{ subject.name }}</span>
+                    <div style="display: flex; gap: 6px; align-items: center;">
+                      @for (grade of getGradesForSubject(subject.id); track grade.id) {
+                        <span class="grade-badge" [title]="grade.description || 'No description'">{{ grade.value }}</span>
+                      } @empty {
+                        <span style="font-size: 0.9rem; color: var(--text-muted);">No grades</span>
+                      }
+                    </div>
+                  </div>
                 }
               </li>
             } @empty {

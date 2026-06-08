@@ -22,6 +22,7 @@ import com.example.demo.models.Grade;
 import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.GradeRepository;
+import com.example.demo.repository.SubjectRepository;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -37,8 +38,11 @@ public class UserManagementController {
     @Autowired
     private GradeRepository gradeRepository;
 
+    @Autowired
+    private SubjectRepository subjectRepository;
+
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userRepository.findAll();
         return ResponseEntity.ok(users);
@@ -69,6 +73,15 @@ public class UserManagementController {
             if (isCurrentStudent) {
                 List<Grade> studentGrades = gradeRepository.findByStudentId(id);
                 gradeRepository.deleteAll(studentGrades);
+
+                // Remove user from all subjects they are enrolled in
+                List<com.example.demo.models.Subject> subjects = subjectRepository.findAll();
+                for (com.example.demo.models.Subject subject : subjects) {
+                    if (subject.getEnrolledUsers().contains(user)) {
+                        subject.getEnrolledUsers().remove(user);
+                        subjectRepository.save(subject);
+                    }
+                }
             }
             Role teacherRole = roleRepository.findByName(RoleName.ROLE_TEACHER)
                     .orElseThrow(() -> new RuntimeException("Teacher Role not found."));
@@ -84,5 +97,37 @@ public class UserManagementController {
         user.setRoles(roles);
         userRepository.save(user);
         return ResponseEntity.ok(user);
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        boolean isAdmin = user.getRoles().stream()
+                .anyMatch(r -> r.getName() == RoleName.ROLE_ADMIN);
+        if (isAdmin) {
+            return new ResponseEntity<>("Cannot delete Admin users", HttpStatus.BAD_REQUEST);
+        }
+
+        // Delete grades for this student
+        List<Grade> studentGrades = gradeRepository.findByStudentId(id);
+        gradeRepository.deleteAll(studentGrades);
+
+        // Remove user from all subjects they are enrolled in
+        List<com.example.demo.models.Subject> subjects = subjectRepository.findAll();
+        for (com.example.demo.models.Subject subject : subjects) {
+            if (subject.getEnrolledUsers().contains(user)) {
+                subject.getEnrolledUsers().remove(user);
+                subjectRepository.save(subject);
+            }
+        }
+
+        userRepository.delete(user);
+        return ResponseEntity.noContent().build();
     }
 }

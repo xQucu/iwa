@@ -17,6 +17,15 @@ public class Subject {
     @NotBlank
     private String name;
 
+    @jakarta.persistence.ManyToMany(fetch = jakarta.persistence.FetchType.LAZY)
+    @jakarta.persistence.JoinTable(
+        name = "subject_users",
+        joinColumns = @jakarta.persistence.JoinColumn(name = "subject_id"),
+        inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "user_id")
+    )
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"password", "roles"})
+    private java.util.Set<User> enrolledUsers = new java.util.HashSet<>();
+
     public Subject() {
     }
 
@@ -38,5 +47,13 @@ public class Subject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public java.util.Set<User> getEnrolledUsers() {
+        return enrolledUsers;
+    }
+
+    public void setEnrolledUsers(java.util.Set<User> enrolledUsers) {
+        this.enrolledUsers = enrolledUsers;
     }
 }

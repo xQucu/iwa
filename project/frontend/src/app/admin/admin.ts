@@ -1,11 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { UserService } from '../services/user-service';
 import { User } from '../models/user';
 
 @Component({
   selector: 'app-admin',
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './admin.html',
   styleUrl: './admin.css',
 })
@@ -58,5 +59,25 @@ export class Admin implements OnInit {
       },
       error: (err) => console.error(err)
     });
+  }
+
+  deleteUser(user: User) {
+    if (this.hasRole(user, 'ROLE_ADMIN')) {
+      return; // Cannot delete admin
+    }
+    
+    if (confirm(`Are you sure you want to completely delete user ${user.username} and all their data?`)) {
+      this.userService.deleteUser(user.id).subscribe({
+        next: () => {
+          this.users.update(list => list.filter(u => u.id !== user.id));
+          this.successMessage.set(`Deleted user ${user.username} successfully.`);
+          setTimeout(() => this.successMessage.set(''), 3000);
+        },
+        error: (err) => {
+          this.errorMessage.set(`Failed to delete user ${user.username}.`);
+          console.error(err);
+        }
+      });
+    }
   }
 }

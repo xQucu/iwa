@@ -29,6 +29,13 @@ export class UserService {
     );
   }
 
+  deleteUser(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.usersUrl}/${id}`, httpOptions).pipe(
+      tap(() => console.log(`UserService: deleted user id=${id}`)),
+      catchError(this.handleError<any>('deleteUser'))
+    );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} failed:`, error);

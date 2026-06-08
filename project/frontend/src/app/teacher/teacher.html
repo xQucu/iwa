@@ -5,10 +5,11 @@
   </header>
 
   <main class="dashboard-content">
-    <section class="admin-grid">
+    <section style="display: flex; flex-direction: column; gap: 20px;">
       <!-- Add Grade Form -->
-      <div class="form-card">
-        <h2>Grade a Student</h2>
+      <!-- Enrollment Form -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <h2>Subject Enrolment</h2>
         
         @if (successMessage()) {
           <div class="alert alert-success">{{ successMessage() }}</div>
@@ -17,18 +18,62 @@
           <div class="alert alert-danger">{{ errorMessage() }}</div>
         }
 
-        <form (ngSubmit)="onSubmit()" #gradeForm="ngForm" class="grade-form">
+        <div style="display: flex; gap: 15px; align-items: flex-end; flex-wrap: wrap; margin-top: 15px;">
+          <div class="form-group" style="flex: 1; min-width: 200px;">
+            <label for="enrolStudentSelect">Student</label>
+            <select 
+              id="enrolStudentSelect" 
+              name="enrolStudentId" 
+              [ngModel]="enrolStudentIdInput()" 
+              (ngModelChange)="enrolStudentIdInput.set($event)"
+            >
+              @for (student of students(); track student.id) {
+                <option [value]="student.id">{{ student.username }}</option>
+              } @empty {
+                <option disabled value="">No students available</option>
+              }
+            </select>
+          </div>
+          <div class="form-group" style="flex: 1; min-width: 200px;">
+            <label for="enrolSubjectSelect">Subject</label>
+            <select 
+              id="enrolSubjectSelect" 
+              name="enrolSubjectSelect" 
+              [ngModel]="enrolSubjectIdInput()" 
+              (ngModelChange)="enrolSubjectIdInput.set($event)"
+            >
+              @for (subject of subjects(); track subject.id) {
+                <option [value]="subject.id">{{ subject.name }}</option>
+              } @empty {
+                <option disabled value="">No subjects available</option>
+              }
+            </select>
+          </div>
+          <button type="button" class="btn btn-primary" (click)="onEnrol()" [disabled]="!enrolStudentIdInput() || !enrolSubjectIdInput()">
+            Enrol
+          </button>
+        </div>
+      </div>
+
+      <!-- Add Grade Form -->
+      <div class="form-card">
+        <h2>Grade a Student</h2>
+        <form (ngSubmit)="onSubmit()" (reset)="onReset()" #gradeForm="ngForm" class="grade-form">
           <div class="form-group">
-            <label for="studentId">Student ID</label>
-            <input 
-              type="number" 
-              id="studentId" 
+            <label for="studentSelect">Student</label>
+            <select 
+              id="studentSelect" 
               name="studentId" 
               [ngModel]="studentIdInput()" 
-              (ngModelChange)="studentIdInput.set($event)" 
-              required 
-              placeholder="e.g. 1"
-            />
+              (ngModelChange)="onStudentChange($event)" 
+              required
+            >
+              @for (student of students(); track student.id) {
+                <option [value]="student.id">{{ student.username }}</option>
+              } @empty {
+                <option disabled value="">No students available</option>
+              }
+            </select>
           </div>
 
           <div class="form-group">
@@ -40,10 +85,10 @@
               (ngModelChange)="subjectIdInput.set($event)"
               required
             >
-              @for (subject of subjects(); track subject.id) {
+              @for (subject of filteredSubjectsForSelectedStudent(); track subject.id) {
                 <option [value]="subject.id">{{ subject.name }}</option>
               } @empty {
-                <option disabled value="">No subjects available</option>
+                <option disabled value="">No subjects enrolled for this student</option>
               }
             </select>
           </div>
@@ -78,16 +123,33 @@
             />
           </div>
 
-          <button type="submit" class="btn btn-primary" [disabled]="!gradeForm.form.valid || subjects().length === 0">
-            Submit Grade
-          </button>
+          <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn btn-primary" [disabled]="!gradeForm.form.valid || subjects().length === 0">
+              Submit Grade
+            </button>
+            <button type="reset" class="btn btn-outline" style="border-color: var(--border-color); color: var(--text-main);">
+              Reset Form
+            </button>
+          </div>
         </form>
       </div>
 
       <!-- Grades List -->
       <div class="list-card">
         <h2>Graded History</h2>
-        
+        <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+          <label for="sortBySelect" style="margin-bottom: 0; font-size: 0.85rem;">Sort by:</label>
+          <select 
+            id="sortBySelect" 
+            [ngModel]="sortBy()" 
+            (ngModelChange)="sortBy.set($event)"
+            style="width: auto; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-color);"
+          >
+            <option value="student">Student Name</option>
+            <option value="subject">Subject</option>
+          </select>
+        </div>
+
         <div class="table-responsive">
           <table class="grades-table">
             <thead>
@@ -100,7 +162,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (grade of grades(); track grade.id) {
+              @for (grade of sortedGrades(); track grade.id) {
                 <tr>
                   <td>{{ grade.student.id }}</td>
                   <td><strong>{{ grade.student.username }}</strong></td>
@@ -111,6 +173,62 @@
               } @empty {
                 <tr>
                   <td colspan="5" class="empty-table-message">No grades have been given yet.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Course Enrollments List -->
+      <div class="list-card">
+        <h2>Course Enrollments</h2>
+        
+        <div style="margin-bottom: 15px;">
+          <input 
+            type="text" 
+            placeholder="Search subjects by name..." 
+            [ngModel]="searchQuery()" 
+            (ngModelChange)="onSearch($event)" 
+            class="form-control"
+            style="width: 100%; padding: 0.625rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.875rem;"
+          />
+        </div>
+
+        <div class="table-responsive">
+          <table class="grades-table">
+            <thead>
+              <tr>
+                <th>Course Name</th>
+                <th>Enrolled Students</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (subject of filteredSubjectsForList(); track subject.id) {
+                <tr>
+                  <td><strong>{{ subject.name }}</strong></td>
+                  <td>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                      @for (user of subject.enrolledUsers; track user.id) {
+                        <span style="display: inline-flex; align-items: center; gap: 6px; background-color: var(--border-color, #eaeaea); padding: 4px 8px; border-radius: 4px;">
+                          {{ user.username }}
+                          <button 
+                            type="button" 
+                            (click)="onUnenrolForSubject(subject.id, user.id)"
+                            style="border: none; background: none; color: var(--danger, #ff4d4d); cursor: pointer; font-weight: bold; font-size: 14px; padding: 0 2px;"
+                            title="Un-enrol"
+                          >
+                            &times;
+                          </button>
+                        </span>
+                      } @empty {
+                        <em style="color: var(--text-muted);">No students enrolled</em>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="2" class="empty-table-message">No courses available.</td>
                 </tr>
               }
             </tbody>

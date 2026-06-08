@@ -41,7 +41,7 @@ public class GradeRESTController {
     private SubjectRepository subjectRepository;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER')")
+    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMIN')")
     public ResponseEntity<?> getGrades(
             @AuthenticationPrincipal UserPrinciple userPrinciple,
             @RequestParam(value = "studentId", required = false) Long studentId) {
@@ -65,7 +65,7 @@ public class GradeRESTController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> gradeStudent(@Valid @RequestBody GradeRequest gradeRequest) {
         // Find target student
         User student = userRepository.findById(gradeRequest.getStudentId()).orElse(null);
@@ -86,6 +86,13 @@ public class GradeRESTController {
             return new ResponseEntity<>("Subject not found", HttpStatus.NOT_FOUND);
         }
 
+        // Verify enrollment
+        boolean isEnrolled = subject.getEnrolledUsers().stream()
+                .anyMatch(u -> u.getId().equals(student.getId()));
+        if (!isEnrolled) {
+            return new ResponseEntity<>("Student is not enrolled in this subject", HttpStatus.BAD_REQUEST);
+        }
+
         // Create and save new grade
         Grade grade = new Grade(
                 gradeRequest.getValue(),
@@ -98,7 +105,7 @@ public class GradeRESTController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     public ResponseEntity<?> updateGrade(@PathVariable("id") Long id, @Valid @RequestBody GradeRequest gradeRequest) {
         Grade grade = gradeRepository.findById(id).orElse(null);
         if (grade == null) {
@@ -122,6 +129,13 @@ public class GradeRESTController {
             return new ResponseEntity<>("Subject not found", HttpStatus.NOT_FOUND);
         }
 
+        // Verify enrollment
+        boolean isEnrolled = subject.getEnrolledUsers().stream()
+                .anyMatch(u -> u.getId().equals(student.getId()));
+        if (!isEnrolled) {
+            return new ResponseEntity<>("Student is not enrolled in this subject", HttpStatus.BAD_REQUEST);
+        }
+
         // Perform the updates
         grade.setStudent(student);
         grade.setSubject(subject);
@@ -130,5 +144,17 @@ public class GradeRESTController {
 
         Grade updatedGrade = gradeRepository.save(grade);
         return ResponseEntity.ok(updatedGrade);
+    }
+
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    public ResponseEntity<?> deleteGrade(@PathVariable("id") Long id) {
+        Grade grade = gradeRepository.findById(id).orElse(null);
+        if (grade == null) {
+            return new ResponseEntity<>("Grade not found", HttpStatus.NOT_FOUND);
+        }
+
+        gradeRepository.delete(grade);
+        return ResponseEntity.noContent().build();
     }
 }

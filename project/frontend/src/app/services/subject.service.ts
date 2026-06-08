@@ -42,6 +42,20 @@ export class SubjectService {
     );
   }
 
+  enrolUser(subjectId: number, userId: number): Observable<Subject> {
+    return this.http.post<Subject>(`${this.subjectsUrl}/${subjectId}/users/${userId}`, {}, httpOptions).pipe(
+      tap(() => console.log(`SubjectService: enrolled user ${userId} in subject ${subjectId}`)),
+      catchError(this.handleError<Subject>('enrolUser'))
+    );
+  }
+
+  unenrolUser(subjectId: number, userId: number): Observable<Subject> {
+    return this.http.delete<Subject>(`${this.subjectsUrl}/${subjectId}/users/${userId}`, httpOptions).pipe(
+      tap(() => console.log(`SubjectService: unenrolled user ${userId} from subject ${subjectId}`)),
+      catchError(this.handleError<Subject>('unenrolUser'))
+    );
+  }
+
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
       console.error(`${operation} failed:`, error);
