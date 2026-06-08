@@ -1,11 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Grade } from '../models/grade';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 
 export interface GradeRequest {
   value: number;
@@ -22,34 +18,18 @@ export class GradeService {
   private gradesUrl = 'http://localhost:8080/grades';
 
   getGrades(studentId?: number): Observable<Grade[]> {
-    let params = new HttpParams();
+    let params = {};
     if (studentId !== undefined) {
-      params = params.set('studentId', studentId.toString());
+      params = { studentId: studentId.toString() };
     }
-    return this.http.get<Grade[]>(this.gradesUrl, { ...httpOptions, params }).pipe(
-      tap((list: Grade[]) => console.log(`GradeService: fetched ${list.length} grades`)),
-      catchError(this.handleError<Grade[]>('getGrades', []))
-    );
+    return this.http.get<Grade[]>(this.gradesUrl, { params });
   }
 
   addGrade(gradeRequest: GradeRequest): Observable<Grade> {
-    return this.http.post<Grade>(this.gradesUrl, gradeRequest, httpOptions).pipe(
-      tap((added: Grade) => console.log(`GradeService: added grade id=${added.id}`)),
-      catchError(this.handleError<Grade>('addGrade'))
-    );
+    return this.http.post<Grade>(this.gradesUrl, gradeRequest);
   }
 
   updateGrade(id: number, gradeRequest: GradeRequest): Observable<Grade> {
-    return this.http.put<Grade>(`${this.gradesUrl}/${id}`, gradeRequest, httpOptions).pipe(
-      tap((updated: Grade) => console.log(`GradeService: updated grade id=${updated.id}`)),
-      catchError(this.handleError<Grade>('updateGrade'))
-    );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed:`, error);
-      return of(result as T);
-    };
+    return this.http.put<Grade>(`${this.gradesUrl}/${id}`, gradeRequest);
   }
 }

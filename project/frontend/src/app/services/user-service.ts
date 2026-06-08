@@ -1,11 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { catchError, Observable, of, tap } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { User } from '../models/user';
-
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
 
 @Injectable({
   providedIn: 'root',
@@ -15,31 +11,14 @@ export class UserService {
   private usersUrl = 'http://localhost:8080/users';
 
   getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersUrl, httpOptions).pipe(
-      tap((list: User[]) => console.log(`UserService: fetched ${list.length} users`)),
-      catchError(this.handleError<User[]>('getUsers', []))
-    );
+    return this.http.get<User[]>(this.usersUrl);
   }
 
   updateUserRole(userId: number, role: string): Observable<User> {
-    let params = new HttpParams().set('role', role);
-    return this.http.put<User>(`${this.usersUrl}/${userId}/role`, {}, { ...httpOptions, params }).pipe(
-      tap((updated: User) => console.log(`UserService: updated user role, id=${updated.id}`)),
-      catchError(this.handleError<User>('updateUserRole'))
-    );
+    return this.http.put<User>(`${this.usersUrl}/${userId}/role`, {}, { params: { role } });
   }
 
   deleteUser(id: number): Observable<any> {
-    return this.http.delete<any>(`${this.usersUrl}/${id}`, httpOptions).pipe(
-      tap(() => console.log(`UserService: deleted user id=${id}`)),
-      catchError(this.handleError<any>('deleteUser'))
-    );
-  }
-
-  private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-      console.error(`${operation} failed:`, error);
-      return of(result as T);
-    };
+    return this.http.delete<any>(`${this.usersUrl}/${id}`);
   }
 }

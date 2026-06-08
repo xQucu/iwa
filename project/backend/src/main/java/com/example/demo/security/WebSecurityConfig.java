@@ -57,6 +57,26 @@ public class WebSecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
+
+                        // Users endpoints: /users (TEACHER, ADMIN), /users/*/role and DELETE /users/* (ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/users").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/users/*/role").hasRole("ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/users/*").hasRole("ADMIN")
+
+                        // Grades endpoints: GET /grades (STUDENT, TEACHER, ADMIN), write/modify/delete (TEACHER, ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/grades").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/grades").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/grades/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/grades/*").hasAnyRole("TEACHER", "ADMIN")
+
+                        // Subjects endpoints: GET /subjects (STUDENT, TEACHER, ADMIN), write/modify/delete (TEACHER, ADMIN)
+                        .requestMatchers(org.springframework.http.HttpMethod.GET, "/subjects").hasAnyRole("STUDENT", "TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/subjects").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/subjects/*/users/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.PUT, "/subjects/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/subjects/*").hasAnyRole("TEACHER", "ADMIN")
+                        .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/subjects/*/users/*").hasAnyRole("TEACHER", "ADMIN")
+
                         .anyRequest().authenticated())
                 .exceptionHandling(unauthorized -> unauthorized
                         .authenticationEntryPoint(unauthorizedHandler))
