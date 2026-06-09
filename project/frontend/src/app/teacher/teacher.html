@@ -85,6 +85,7 @@
               (ngModelChange)="onStudentChange($event)"
               required
             >
+              <option [value]="null" disabled selected>Choose a student...</option>
               @for (student of students(); track student.id) {
               <option [value]="student.id">{{ student.username }}</option>
               } @empty {
@@ -102,6 +103,7 @@
               (ngModelChange)="subjectIdInput.set($event)"
               required
             >
+              <option [value]="null" disabled selected>Choose a subject...</option>
               @for (subject of filteredSubjectsForSelectedStudent(); track
               subject.id) {
               <option [value]="subject.id">{{ subject.name }}</option>
@@ -147,7 +149,7 @@
             <button
               type="submit"
               class="btn btn-primary"
-              [disabled]="!gradeForm.form.valid || subjects().length === 0"
+              [disabled]="!gradeForm.form.valid || !studentIdInput() || !subjectIdInput()"
             >
               Submit Grade
             </button>

@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -26,7 +28,7 @@ public class User {
 
     @NotBlank
     @Size(min = 6, max = 100)
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

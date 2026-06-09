@@ -53,12 +53,8 @@ export class Teacher implements OnInit {
   onReset() {
     this.valueInput.set(5.0);
     this.descriptionInput.set("");
-    // Restore default selected student and subject if students exist
-    const studentsList = this.students();
-    if (studentsList.length > 0) {
-      this.studentIdInput.set(studentsList[0].id);
-      this.updateInitialSubjectSelection();
-    }
+    this.studentIdInput.set(null);
+    this.subjectIdInput.set(null);
   }
 
   filteredSubjectsForList() {
@@ -88,9 +84,7 @@ export class Teacher implements OnInit {
         this.students.set(studentUsers);
         if (studentUsers.length > 0) {
           const firstStudentId = studentUsers[0].id;
-          this.studentIdInput.set(firstStudentId);
           this.enrolStudentIdInput.set(firstStudentId);
-          this.updateInitialSubjectSelection();
         }
       },
       error: (err) => console.error(err),
@@ -98,7 +92,6 @@ export class Teacher implements OnInit {
     this.subjectService.getSubjects().subscribe({
       next: (data) => {
         this.subjects.set(data);
-        this.updateInitialSubjectSelection();
       },
       error: (err) => console.error(err),
     });
@@ -160,8 +153,7 @@ export class Teacher implements OnInit {
             this.successMessage.set("Grade added successfully!");
             this.errorMessage.set("");
             this.grades.update((list) => [...list, newGrade]);
-            this.studentIdInput.set(null);
-            this.descriptionInput.set("");
+            this.onReset();
             setTimeout(() => this.successMessage.set(""), 3000);
           } else {
             this.errorMessage.set(
