@@ -1,42 +1,41 @@
-<div class="container">
-  <header class="dashboard-header">
-    <div class="logo">Online gradebook</div>
-    <div class="user-info">
+<div class="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8">
+  <header class="flex justify-between items-center py-6 border-b border-gray-200">
+    <div class="text-xl font-extrabold text-gray-900 tracking-tight">Online Gradebook</div>
+    <div class="flex items-center gap-4">
       @if (isLoggedIn()) {
-      <span class="welcome"
-        >Logged in as: <strong>{{ username() }}</strong></span
-      >
-      <button class="btn btn-logout" (click)="logout()">Logout</button>
+      <span class="text-sm text-gray-500">Logged in as: <strong class="text-gray-900">{{ username() }}</strong></span>
+      <button class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 hover:text-red-600 hover:border-red-600 transition-colors" (click)="logout()">Logout</button>
       } @else {
-      <a routerLink="login" class="btn btn-login">Login</a>
-      <a routerLink="signup" class="btn btn-register">Register</a>
+      <a routerLink="login" class="px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-black hover:bg-gray-800 transition-colors">Login</a>
+      <a routerLink="signup" class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">Register</a>
       }
     </div>
   </header>
 
   @if (isLoggedIn()) {
-  <div class="dashboard-nav">
+  <div class="flex gap-3">
     @if (isAdmin()) {
-    <a routerLink="admin" class="nav-link">Admin Dashboard (Roles)</a>
+    <a routerLink="admin" class="text-sm font-semibold px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 transition-colors">Admin Dashboard (Roles)</a>
     } @if (isTeacher() || isAdmin()) {
-    <a routerLink="teacher" class="nav-link">Teacher Dashboard (Grades)</a>
+    <a routerLink="teacher" class="text-sm font-semibold px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-800 transition-colors">Teacher Dashboard (Grades)</a>
     }
   </div>
 
-  <main class="dashboard-content">
-    <section class="subjects-section">
-      <h2>Academic Subjects</h2>
+  <main class="w-full">
+    <section class="flex flex-col gap-8">
+      <h2 class="text-xl font-bold text-gray-900">Academic Subjects</h2>
 
       @if (isTeacher() || isAdmin()) {
-      <div class="form-card">
-        <h3>Add New Subject</h3>
-        <div class="input-group">
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-semibold text-gray-900 mb-4">Add New Subject</h3>
+        <div class="flex gap-2">
           <input
             #newSubjectName
             placeholder="Subject Name (e.g. Mathematics)"
+            class="flex-1 px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
           />
           <button
-            class="btn btn-primary"
+            class="inline-flex items-center justify-center px-4 py-2.5 bg-black hover:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors"
             (click)="add(newSubjectName.value); newSubjectName.value = ''"
           >
             Add Subject
@@ -45,70 +44,57 @@
       </div>
       }
 
-      <div class="list-card">
-        <h3>Current Subjects</h3>
-        <ul class="subject-list">
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-semibold text-gray-900 mb-4">Current Subjects</h3>
+        <ul class="space-y-3">
           @for (subject of subjectList(); track subject.id) {
-          <li class="subject-item">
+          <li class="flex justify-between items-center p-4 bg-white border border-gray-200 rounded-lg">
             @if (isTeacher() || isAdmin()) {
-            <div class="subject-edit-mode">
-              <input #editName [value]="subject.name" class="edit-input" />
-              <div class="button-group">
+            <div class="flex items-center gap-3 w-full">
+              <input #editName [value]="subject.name" class="flex-1 px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-black" />
+              <div class="flex gap-2">
                 <button
-                  class="btn btn-secondary"
+                  class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-800 transition-colors"
                   (click)="update(editName.value, subject)"
                 >
                   Update
                 </button>
-                <button class="btn btn-danger" (click)="delete(subject)">
+                <button class="px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 hover:bg-red-50 text-red-600 transition-colors" (click)="delete(subject)">
                   Delete
                 </button>
               </div>
             </div>
             } @else {
-            <div
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                width: 100%;
-              "
-            >
-              <span class="subject-name">{{ subject.name }}</span>
-              <div style="display: flex; gap: 6px; align-items: center">
-                @for (grade of getGradesForSubject(subject.id); track grade.id)
-                {
-                <span
-                  class="grade-badge"
-                  [title]="grade.description || 'No description'"
-                  >{{ grade.value }}</span
-                >
+            <div class="flex items-center justify-between w-full">
+              <span class="font-semibold text-gray-900 text-sm">{{ subject.name }}</span>
+              <div class="flex gap-1.5 items-center">
+                @for (grade of getGradesForSubject(subject.id); track grade.id) {
+                <span class="px-2 py-0.5 text-xs font-bold rounded bg-gray-100 text-gray-800 border border-gray-200" [title]="grade.description || 'No description'">
+                  {{ grade.value }}
+                </span>
                 } @empty {
-                <span style="font-size: 0.9rem; color: var(--text-muted)"
-                  >No grades</span
-                >
+                <span class="text-xs text-gray-400 italic">No grades</span>
                 }
               </div>
             </div>
             }
           </li>
           } @empty {
-          <p class="empty-message">No subjects registered yet.</p>
+          <p class="text-gray-400 italic text-sm text-center py-4">No subjects registered yet.</p>
           }
         </ul>
       </div>
     </section>
   </main>
   } @else {
-  <div class="welcome-card">
-    <h1>Welcome</h1>
-    <p>
-      Please log in or register to access the academic subject catalog and
-      grades.
+  <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-sm text-center space-y-4 max-w-md mx-auto mt-12">
+    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Welcome</h1>
+    <p class="text-sm text-gray-600">
+      Please log in or register to access the academic subject catalog and grades.
     </p>
-    <div class="welcome-actions">
-      <a routerLink="login" class="btn btn-primary">Login Now</a>
-      <a routerLink="signup" class="btn btn-outline">Register Account</a>
+    <div class="flex justify-center gap-4">
+      <a routerLink="login" class="inline-flex items-center justify-center px-4 py-2 bg-black hover:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors">Login Now</a>
+      <a routerLink="signup" class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors">Register Account</a>
     </div>
   </div>
   }

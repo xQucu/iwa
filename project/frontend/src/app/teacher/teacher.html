@@ -1,38 +1,30 @@
-<div class="container">
-  <header class="dashboard-header">
-    <div class="logo">Teacher Dashboard</div>
-    <a routerLink="" class="btn btn-secondary">Back to Subjects</a>
+<div class="max-w-5xl mx-auto px-4 py-8 flex flex-col gap-8">
+  <header class="flex justify-between items-center py-6 border-b border-gray-200">
+    <div class="text-xl font-extrabold text-gray-900 tracking-tight">Teacher Dashboard</div>
+    <a routerLink="" class="inline-flex items-center justify-center px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold rounded-lg transition-colors">Back to Subjects</a>
   </header>
 
-  <main class="dashboard-content">
-    <section style="display: flex; flex-direction: column; gap: 20px">
-      <!-- Add Grade Form -->
-      <!-- Enrollment Form -->
-      <div class="form-card" style="margin-bottom: 20px">
-        <h2>Subject Enrolment</h2>
+  <main class="w-full">
+    <section class="flex flex-col gap-8">
+      <!-- Subject Enrolment -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Subject Enrolment</h2>
 
         @if (successMessage()) {
-        <div class="alert alert-success">{{ successMessage() }}</div>
+        <div class="p-3 rounded-lg text-sm bg-green-50 text-green-700 border border-green-200 mb-4">{{ successMessage() }}</div>
         } @if (errorMessage()) {
-        <div class="alert alert-danger">{{ errorMessage() }}</div>
+        <div class="p-3 rounded-lg text-sm bg-red-50 text-red-700 border border-red-200 mb-4">{{ errorMessage() }}</div>
         }
 
-        <div
-          style="
-            display: flex;
-            gap: 15px;
-            align-items: flex-end;
-            flex-wrap: wrap;
-            margin-top: 15px;
-          "
-        >
-          <div class="form-group" style="flex: 1; min-width: 200px">
-            <label for="enrolStudentSelect">Student</label>
+        <div class="flex flex-row gap-4 items-end flex-wrap mt-4">
+          <div class="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+            <label for="enrolStudentSelect" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Student</label>
             <select
               id="enrolStudentSelect"
               name="enrolStudentId"
               [ngModel]="enrolStudentIdInput()"
               (ngModelChange)="enrolStudentIdInput.set($event)"
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             >
               @for (student of students(); track student.id) {
               <option [value]="student.id">{{ student.username }}</option>
@@ -41,13 +33,14 @@
               }
             </select>
           </div>
-          <div class="form-group" style="flex: 1; min-width: 200px">
-            <label for="enrolSubjectSelect">Subject</label>
+          <div class="flex flex-col gap-1.5 flex-1 min-w-[200px]">
+            <label for="enrolSubjectSelect" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Subject</label>
             <select
               id="enrolSubjectSelect"
               name="enrolSubjectSelect"
               [ngModel]="enrolSubjectIdInput()"
               (ngModelChange)="enrolSubjectIdInput.set($event)"
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             >
               @for (subject of subjects(); track subject.id) {
               <option [value]="subject.id">{{ subject.name }}</option>
@@ -58,7 +51,7 @@
           </div>
           <button
             type="button"
-            class="btn btn-primary"
+            class="inline-flex items-center justify-center px-4 py-2.5 bg-black hover:bg-gray-800 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             (click)="onEnrol()"
             [disabled]="!enrolStudentIdInput() || !enrolSubjectIdInput()"
           >
@@ -67,23 +60,24 @@
         </div>
       </div>
 
-      <!-- Add Grade Form -->
-      <div class="form-card">
-        <h2>Grade a Student</h2>
+      <!-- Grade a Student -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Grade a Student</h2>
         <form
           (ngSubmit)="onSubmit()"
           (reset)="onReset()"
           #gradeForm="ngForm"
-          class="grade-form"
+          class="space-y-4"
         >
-          <div class="form-group">
-            <label for="studentSelect">Student</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="studentSelect" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Student</label>
             <select
               id="studentSelect"
               name="studentId"
               [ngModel]="studentIdInput()"
               (ngModelChange)="onStudentChange($event)"
               required
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             >
               <option [value]="null" disabled selected>
                 Choose a student...
@@ -96,14 +90,15 @@
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="subjectSelect">Subject</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="subjectSelect" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Subject</label>
             <select
               id="subjectSelect"
               name="subjectSelect"
               [ngModel]="subjectIdInput()"
               (ngModelChange)="subjectIdInput.set($event)"
               required
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             >
               <option [value]="null" disabled selected>
                 Choose a subject...
@@ -119,14 +114,15 @@
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="gradeValue">Grade Value</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="gradeValue" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Grade Value</label>
             <select
               id="gradeValue"
               name="gradeValue"
               [ngModel]="valueInput()"
               (ngModelChange)="valueInput.set($event)"
               required
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             >
               <option [value]="2.0">2.0</option>
               <option [value]="3.0">3.0</option>
@@ -137,8 +133,8 @@
             </select>
           </div>
 
-          <div class="form-group">
-            <label for="description">Description (optional)</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="description" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Description (optional)</label>
             <input
               type="text"
               id="description"
@@ -146,21 +142,21 @@
               [ngModel]="descriptionInput()"
               (ngModelChange)="descriptionInput.set($event)"
               placeholder="e.g. Midterm exam"
+              class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
             />
           </div>
 
-          <div style="display: flex; gap: 10px">
+          <div class="flex gap-2">
             <button
               type="submit"
-              class="btn btn-primary"
+              class="inline-flex items-center justify-center px-4 py-2.5 bg-black hover:bg-gray-800 text-white text-sm font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               [disabled]="!gradeForm.form.valid || !studentIdInput() || !subjectIdInput()"
             >
               Submit Grade
             </button>
             <button
               type="reset"
-              class="btn btn-outline"
-              style="border-color: var(--border-color); color: var(--text-main)"
+              class="inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-semibold rounded-lg transition-colors"
             >
               Reset Form
             </button>
@@ -168,59 +164,48 @@
         </form>
       </div>
 
-      <!-- Grades List -->
-      <div class="list-card">
-        <h2>Graded History</h2>
-        <div
-          style="
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          "
-        >
-          <label for="sortBySelect" style="margin-bottom: 0; font-size: 0.85rem"
-            >Sort by:</label
-          >
+      <!-- Graded History -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Graded History</h2>
+        
+        <div class="mb-4 flex items-center gap-2">
+          <label for="sortBySelect" class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Sort by:</label>
           <select
             id="sortBySelect"
             [ngModel]="sortBy()"
             (ngModelChange)="sortBy.set($event)"
-            style="
-              width: auto;
-              padding: 4px 8px;
-              border-radius: 4px;
-              border: 1px solid var(--border-color);
-            "
+            class="px-2 py-1 border border-gray-300 rounded-md text-sm bg-white text-gray-900 focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
           >
             <option value="student">Student Name</option>
             <option value="subject">Subject</option>
           </select>
         </div>
 
-        <div class="table-responsive">
-          <table class="grades-table">
+        <div class="w-full overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-left">
             <thead>
-              <tr>
-                <th>Student ID</th>
-                <th>Username</th>
-                <th>Subject</th>
-                <th>Grade</th>
-                <th>Description</th>
+              <tr class="border-b border-gray-200">
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Student ID</th>
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Username</th>
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Subject</th>
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Grade</th>
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Description</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100">
               @for (grade of sortedGrades(); track grade.id) {
-              <tr>
-                <td>{{ grade.student.id }}</td>
-                <td><strong>{{ grade.student.username }}</strong></td>
-                <td>{{ grade.subject.name }}</td>
-                <td><span class="grade-badge">{{ grade.value }}</span></td>
-                <td>{{ grade.description || '-' }}</td>
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ grade.student.id }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-950"><strong>{{ grade.student.username }}</strong></td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ grade.subject.name }}</td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm">
+                  <span class="px-2 py-0.5 text-xs font-bold rounded bg-gray-100 text-gray-800 border border-gray-200">{{ grade.value }}</span>
+                </td>
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{{ grade.description || '-' }}</td>
               </tr>
               } @empty {
               <tr>
-                <td colspan="5" class="empty-table-message">
+                <td colspan="5" class="px-4 py-8 text-center text-sm text-gray-500 italic">
                   No grades have been given yet.
                 </td>
               </tr>
@@ -229,81 +214,56 @@
           </table>
         </div>
       </div>
-      <!-- Course Enrollments List -->
-      <div class="list-card">
-        <h2>Course Enrollments</h2>
 
-        <div style="margin-bottom: 15px">
+      <!-- Course Enrollments List -->
+      <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Course Enrollments</h2>
+
+        <div class="mb-4">
           <input
             #searchInput
             type="text"
             placeholder="Search subjects by name..."
             (keyup)="onSearch(searchInput.value)"
-            class="form-control"
-            style="
-              width: 100%;
-              padding: 0.625rem 0.75rem;
-              border: 1px solid var(--border-color);
-              border-radius: 6px;
-              font-size: 0.875rem;
-            "
+            class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
           />
         </div>
 
-        <div class="table-responsive">
-          <table class="grades-table">
+        <div class="w-full overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-left">
             <thead>
-              <tr>
-                <th>Course Name</th>
-                <th>Enrolled Students</th>
+              <tr class="border-b border-gray-200">
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Course Name</th>
+                <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wider">Enrolled Students</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-100">
               @for (subject of filteredSubjectsForList(); track subject.id) {
-              <tr>
-                <td><strong>{{ subject.name }}</strong></td>
-                <td>
-                  <div style="display: flex; flex-wrap: wrap; gap: 8px">
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-950"><strong>{{ subject.name }}</strong></td>
+                <td class="px-4 py-4 text-sm">
+                  <div class="flex flex-wrap gap-2">
                     @for (user of subject.enrolledUsers; track user.id) {
-                    <span
-                      style="
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 6px;
-                        background-color: var(--border-color, #eaeaea);
-                        padding: 4px 8px;
-                        border-radius: 4px;
-                      "
-                    >
+                    <span class="inline-flex items-center gap-1.5 bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-1 rounded-md border border-gray-200">
                       {{ user.username }}
                       <button
                         type="button"
                         (click)="onUnenrolForSubject(subject.id, user.id)"
-                        style="
-                          border: none;
-                          background: none;
-                          color: var(--danger, #ff4d4d);
-                          cursor: pointer;
-                          font-weight: bold;
-                          font-size: 14px;
-                          padding: 0 2px;
-                        "
+                        class="text-red-500 hover:text-red-700 font-bold focus:outline-none select-none"
                         title="Un-enrol"
                       >
                         &times;
                       </button>
                     </span>
                     } @empty {
-                    <em style="color: var(--text-muted)"
-                      >No students enrolled</em
-                    >
+                    <em class="text-gray-400 italic">No students enrolled</em>
                     }
                   </div>
                 </td>
               </tr>
               } @empty {
               <tr>
-                <td colspan="2" class="empty-table-message">
+                <td colspan="2" class="px-4 py-8 text-center text-sm text-gray-500 italic">
                   No courses available.
                 </td>
               </tr>

@@ -1,19 +1,19 @@
-<div class="auth-wrapper">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
   @if (isSignedUp()) {
-  <div class="auth-card" style="text-align: center">
-    <div class="auth-header">
-      <h2>Registration Successful!</h2>
-      <p>Your account has been created. You can now log in.</p>
+  <div class="max-w-md w-full space-y-6 bg-white p-8 border border-gray-200 rounded-xl shadow-sm text-center">
+    <div>
+      <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Registration Successful!</h2>
+      <p class="mt-2 text-sm text-gray-600">Your account has been created. You can now log in.</p>
     </div>
-    <div style="display: flex; flex-direction: column; gap: 1rem">
-      <a routerLink="login" class="btn btn-primary">Go to Login</a>
+    <div class="flex flex-col gap-4">
+      <a routerLink="/auth/login" class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-semibold text-white bg-black hover:bg-gray-800 transition-colors">Go to Login</a>
     </div>
   </div>
   } @else {
-  <div class="auth-card">
-    <div class="auth-header">
-      <h2>Create Account</h2>
-      <p>Register as a student or teacher</p>
+  <div class="max-w-md w-full space-y-6 bg-white p-8 border border-gray-200 rounded-xl shadow-sm">
+    <div class="text-center">
+      <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Create Account</h2>
+      <p class="mt-2 text-sm text-gray-600">Register as a student or teacher</p>
     </div>
 
     <form
@@ -21,10 +21,10 @@
       (ngSubmit)="f.form.valid && onSubmit()"
       #f="ngForm"
       novalidate
-      class="grade-form"
+      class="mt-6 space-y-4"
     >
-      <div class="form-group">
-        <label for="username">Username</label>
+      <div class="flex flex-col gap-1.5">
+        <label for="username" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Username</label>
         <input
           type="text"
           id="username"
@@ -33,20 +33,18 @@
           #username="ngModel"
           required
           placeholder="Choose a username"
+          class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
         />
         @if (username.invalid && (username.dirty || username.touched)) { @if
         (username.errors?.['required']) {
-        <div
-          class="alert alert-danger"
-          style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.85rem"
-        >
+        <div class="mt-2 p-2 rounded-lg text-xs bg-red-50 text-red-700 border border-red-200">
           Username is required.
         </div>
         } }
       </div>
 
-      <div class="form-group">
-        <label for="password">Password</label>
+      <div class="flex flex-col gap-1.5">
+        <label for="password" class="text-xs font-semibold text-gray-500 tracking-wider uppercase">Password</label>
         <input
           type="password"
           id="password"
@@ -56,20 +54,15 @@
           required
           minlength="6"
           placeholder="At least 6 characters"
+          class="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-black focus:ring-1 focus:ring-black text-sm transition-colors"
         />
         @if (password.invalid && (password.dirty || password.touched)) { @if
         (password.errors?.['required']) {
-        <div
-          class="alert alert-danger"
-          style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.85rem"
-        >
+        <div class="mt-2 p-2 rounded-lg text-xs bg-red-50 text-red-700 border border-red-200">
           Password is required.
         </div>
         } @if (password.errors?.['minlength']) {
-        <div
-          class="alert alert-danger"
-          style="margin-top: 0.5rem; padding: 0.5rem; font-size: 0.85rem"
-        >
+        <div class="mt-2 p-2 rounded-lg text-xs bg-red-50 text-red-700 border border-red-200">
           Password must be at least 6 characters.
         </div>
         } }
@@ -77,25 +70,22 @@
 
       <button
         type="submit"
-        class="btn btn-primary"
+        class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg text-sm font-semibold text-white bg-black hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mt-2"
         [disabled]="!f.form.valid"
-        style="width: 100%; margin-top: 0.5rem"
       >
         Register
       </button>
 
       @if (f.submitted && isSignUpFailed()) {
-      <div class="alert alert-danger" style="margin-top: 1rem">
+      <div class="p-3 rounded-lg text-sm bg-red-50 text-red-700 border border-red-200 mt-4">
         Registration failed!
       </div>
       }
     </form>
 
-    <div class="auth-footer">
-      <p>Already have an account?</p>
-      <a routerLink="/login" class="btn btn-outline" style="width: 100%"
-        >Sign In</a
-      >
+    <div class="mt-6 text-center space-y-3">
+      <p class="text-sm text-gray-500">Already have an account?</p>
+      <a routerLink="/login" class="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-colors">Sign In</a>
     </div>
   </div>
   }
