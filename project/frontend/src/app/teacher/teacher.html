@@ -85,7 +85,9 @@
               (ngModelChange)="onStudentChange($event)"
               required
             >
-              <option [value]="null" disabled selected>Choose a student...</option>
+              <option [value]="null" disabled selected>
+                Choose a student...
+              </option>
               @for (student of students(); track student.id) {
               <option [value]="student.id">{{ student.username }}</option>
               } @empty {
@@ -103,7 +105,9 @@
               (ngModelChange)="subjectIdInput.set($event)"
               required
             >
-              <option [value]="null" disabled selected>Choose a subject...</option>
+              <option [value]="null" disabled selected>
+                Choose a subject...
+              </option>
               @for (subject of filteredSubjectsForSelectedStudent(); track
               subject.id) {
               <option [value]="subject.id">{{ subject.name }}</option>

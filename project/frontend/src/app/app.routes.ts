@@ -27,9 +27,6 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { roles: ["ROLE_ADMIN"] },
   },
-  { path: "auth/login", component: Login },
+  { path: "login", component: Login },
   { path: "signup", component: Register },
-  { path: "", redirectTo: "home", pathMatch: "full" },
 ];
-
-
