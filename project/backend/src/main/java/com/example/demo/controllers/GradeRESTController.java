@@ -98,8 +98,7 @@ public class GradeRESTController {
                 gradeRequest.getValue(),
                 gradeRequest.getDescription(),
                 subject,
-                student
-        );
+                student);
         Grade savedGrade = gradeRepository.save(grade);
         return new ResponseEntity<>(savedGrade, HttpStatus.CREATED);
     }

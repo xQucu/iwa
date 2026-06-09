@@ -1,14 +1,14 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Subject } from '../models/subject';
+import { inject, Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { Subject } from "../models/subject";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class SubjectService {
   private http = inject(HttpClient);
-  private subjectsUrl = 'http://localhost:8080/subjects';
+  private subjectsUrl = "http://localhost:8080/subjects";
 
   getSubjects(): Observable<Subject[]> {
     return this.http.get<Subject[]>(this.subjectsUrl);
@@ -27,10 +27,15 @@ export class SubjectService {
   }
 
   enrolUser(subjectId: number, userId: number): Observable<Subject> {
-    return this.http.post<Subject>(`${this.subjectsUrl}/${subjectId}/users/${userId}`, {});
+    return this.http.post<Subject>(
+      `${this.subjectsUrl}/${subjectId}/users/${userId}`,
+      {},
+    );
   }
 
   unenrolUser(subjectId: number, userId: number): Observable<Subject> {
-    return this.http.delete<Subject>(`${this.subjectsUrl}/${subjectId}/users/${userId}`);
+    return this.http.delete<Subject>(
+      `${this.subjectsUrl}/${subjectId}/users/${userId}`,
+    );
   }
 }

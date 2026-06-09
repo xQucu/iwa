@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Grade } from '../models/grade';
+import { inject, Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import { Grade } from "../models/grade";
 
 export interface GradeRequest {
   value: number;
@@ -11,11 +11,11 @@ export interface GradeRequest {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class GradeService {
   private http = inject(HttpClient);
-  private gradesUrl = 'http://localhost:8080/grades';
+  private gradesUrl = "http://localhost:8080/grades";
 
   getGrades(studentId?: number): Observable<Grade[]> {
     let params = {};

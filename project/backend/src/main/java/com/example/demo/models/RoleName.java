@@ -5,4 +5,3 @@ public enum RoleName {
     ROLE_TEACHER,
     ROLE_ADMIN
 }
-

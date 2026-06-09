@@ -46,20 +46,18 @@ public class SubjectRESTController {
     public List<Subject> getAllSubjects() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrinciple userDetails = (UserPrinciple) auth.getPrincipal();
-        boolean isStudent = userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
         boolean isTeacherOrAdmin = userDetails.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_TEACHER") || a.getAuthority().equals("ROLE_ADMIN"));
 
         List<Subject> allSubjects = subjectRepository.findAll();
-        
+
         if (isTeacherOrAdmin) {
             return allSubjects;
         } else {
             // Student: filter only enrolled subjects
             return allSubjects.stream()
-                .filter(s -> s.getEnrolledUsers().stream().anyMatch(u -> u.getId().equals(userDetails.getId())))
-                .collect(Collectors.toList());
+                    .filter(s -> s.getEnrolledUsers().stream().anyMatch(u -> u.getId().equals(userDetails.getId())))
+                    .collect(Collectors.toList());
         }
     }
 
@@ -101,7 +99,8 @@ public class SubjectRESTController {
             return new ResponseEntity<>("Subject not found", HttpStatus.NOT_FOUND);
         }
 
-        // Programmatically cascade delete associated grades to ensure referential integrity
+        // Programmatically cascade delete associated grades to ensure referential
+        // integrity
         List<Grade> grades = gradeRepository.findBySubjectId(id);
         gradeRepository.deleteAll(grades);
 
@@ -112,7 +111,8 @@ public class SubjectRESTController {
     @PostMapping("/{subjectId}/users/{userId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @Transactional
-    public ResponseEntity<?> enrollUser(@PathVariable("subjectId") Long subjectId, @PathVariable("userId") Long userId) {
+    public ResponseEntity<?> enrollUser(@PathVariable("subjectId") Long subjectId,
+            @PathVariable("userId") Long userId) {
         Subject subject = subjectRepository.findById(subjectId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
         if (subject == null || user == null) {
@@ -127,7 +127,8 @@ public class SubjectRESTController {
     @DeleteMapping("/{subjectId}/users/{userId}")
     @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
     @Transactional
-    public ResponseEntity<?> unenrollUser(@PathVariable("subjectId") Long subjectId, @PathVariable("userId") Long userId) {
+    public ResponseEntity<?> unenrollUser(@PathVariable("subjectId") Long subjectId,
+            @PathVariable("userId") Long userId) {
         Subject subject = subjectRepository.findById(subjectId).orElse(null);
         User user = userRepository.findById(userId).orElse(null);
         if (subject == null || user == null) {

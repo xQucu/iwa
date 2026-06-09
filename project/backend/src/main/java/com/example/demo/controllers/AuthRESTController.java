@@ -88,7 +88,6 @@ public class AuthRESTController {
             roles.add(studentRole);
         }
 
-
         user.setRoles(roles);
         userRepository.save(user);
 

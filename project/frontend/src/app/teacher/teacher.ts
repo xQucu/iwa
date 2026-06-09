@@ -1,36 +1,36 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { GradeService } from '../services/grade.service';
-import { SubjectService } from '../services/subject.service';
-import { Subject } from '../models/subject';
-import { Grade } from '../models/grade';
-import { UserService } from '../services/user-service';
-import { User } from '../models/user';
+import { Component, inject, OnInit, signal } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { GradeService } from "../services/grade.service";
+import { SubjectService } from "../services/subject.service";
+import { Subject } from "../models/subject";
+import { Grade } from "../models/grade";
+import { UserService } from "../services/user-service";
+import { User } from "../models/user";
 
 @Component({
-  selector: 'app-teacher',
+  selector: "app-teacher",
   imports: [RouterLink, FormsModule],
-  templateUrl: './teacher.html',
-  styleUrl: './teacher.css',
+  templateUrl: "./teacher.html",
+  styleUrl: "./teacher.css",
 })
 export class Teacher implements OnInit {
   grades = signal<Grade[]>([]);
   subjects = signal<Subject[]>([]);
   students = signal<User[]>([]);
-  errorMessage = signal<string>('');
-  successMessage = signal<string>('');
+  errorMessage = signal<string>("");
+  successMessage = signal<string>("");
 
   studentIdInput = signal<number | null>(null);
   subjectIdInput = signal<number | null>(null);
   valueInput = signal<number>(5.0);
-  descriptionInput = signal<string>('');
+  descriptionInput = signal<string>("");
 
   enrolStudentIdInput = signal<number | null>(null);
   enrolSubjectIdInput = signal<number | null>(null);
 
-  searchQuery = signal<string>('');
-  sortBy = signal<'student' | 'subject'>('student');
+  searchQuery = signal<string>("");
+  sortBy = signal<"student" | "subject">("student");
 
   onSearch(query: string) {
     this.searchQuery.set(query);
@@ -39,16 +39,20 @@ export class Teacher implements OnInit {
   sortedGrades() {
     const list = [...this.grades()];
     const key = this.sortBy();
-    if (key === 'student') {
-      return list.sort((a, b) => (a.student?.username || '').localeCompare(b.student?.username || ''));
+    if (key === "student") {
+      return list.sort((a, b) =>
+        (a.student?.username || "").localeCompare(b.student?.username || ""),
+      );
     } else {
-      return list.sort((a, b) => (a.subject?.name || '').localeCompare(b.subject?.name || ''));
+      return list.sort((a, b) =>
+        (a.subject?.name || "").localeCompare(b.subject?.name || ""),
+      );
     }
   }
 
   onReset() {
     this.valueInput.set(5.0);
-    this.descriptionInput.set('');
+    this.descriptionInput.set("");
     // Restore default selected student and subject if students exist
     const studentsList = this.students();
     if (studentsList.length > 0) {
@@ -60,7 +64,7 @@ export class Teacher implements OnInit {
   filteredSubjectsForList() {
     const q = this.searchQuery().toLowerCase().trim();
     if (!q) return this.subjects();
-    return this.subjects().filter(s => s.name.toLowerCase().includes(q));
+    return this.subjects().filter((s) => s.name.toLowerCase().includes(q));
   }
 
   private gradeService = inject(GradeService);
@@ -74,11 +78,13 @@ export class Teacher implements OnInit {
   loadData() {
     this.gradeService.getGrades().subscribe({
       next: (data) => this.grades.set(data),
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
     this.userService.getUsers().subscribe({
       next: (data) => {
-        const studentUsers = data.filter(u => u.roles.some(r => r.name === 'ROLE_STUDENT'));
+        const studentUsers = data.filter((u) =>
+          u.roles.some((r) => r.name === "ROLE_STUDENT"),
+        );
         this.students.set(studentUsers);
         if (studentUsers.length > 0) {
           const firstStudentId = studentUsers[0].id;
@@ -87,22 +93,22 @@ export class Teacher implements OnInit {
           this.updateInitialSubjectSelection();
         }
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
     this.subjectService.getSubjects().subscribe({
       next: (data) => {
         this.subjects.set(data);
         this.updateInitialSubjectSelection();
       },
-      error: (err) => console.error(err)
+      error: (err) => console.error(err),
     });
   }
 
   filteredSubjectsForSelectedStudent() {
     const selectedStudentId = this.studentIdInput();
     if (!selectedStudentId) return [];
-    return this.subjects().filter(subject => 
-      subject.enrolledUsers?.some(user => user.id == selectedStudentId)
+    return this.subjects().filter((subject) =>
+      subject.enrolledUsers?.some((user) => user.id == selectedStudentId),
     );
   }
 
@@ -135,33 +141,39 @@ export class Teacher implements OnInit {
     const desc = this.descriptionInput();
 
     if (!sId || !subId) {
-      this.errorMessage.set('Please provide a Student ID and select a Subject.');
+      this.errorMessage.set(
+        "Please provide a Student ID and select a Subject.",
+      );
       return;
     }
 
-    this.gradeService.addGrade({
-      studentId: sId,
-      subjectId: subId,
-      value: val,
-      description: desc
-    }).subscribe({
-      next: (newGrade) => {
-        if (newGrade && newGrade.id) {
-          this.successMessage.set('Grade added successfully!');
-          this.errorMessage.set('');
-          this.grades.update(list => [...list, newGrade]);
-          this.studentIdInput.set(null);
-          this.descriptionInput.set('');
-          setTimeout(() => this.successMessage.set(''), 3000);
-        } else {
-          this.errorMessage.set('Failed to add grade. Make sure student ID is valid.');
-        }
-      },
-      error: (err) => {
-        this.errorMessage.set('Error submitting grade.');
-        console.error(err);
-      }
-    });
+    this.gradeService
+      .addGrade({
+        studentId: sId,
+        subjectId: subId,
+        value: val,
+        description: desc,
+      })
+      .subscribe({
+        next: (newGrade) => {
+          if (newGrade && newGrade.id) {
+            this.successMessage.set("Grade added successfully!");
+            this.errorMessage.set("");
+            this.grades.update((list) => [...list, newGrade]);
+            this.studentIdInput.set(null);
+            this.descriptionInput.set("");
+            setTimeout(() => this.successMessage.set(""), 3000);
+          } else {
+            this.errorMessage.set(
+              "Failed to add grade. Make sure student ID is valid.",
+            );
+          }
+        },
+        error: (err) => {
+          this.errorMessage.set("Error submitting grade.");
+          console.error(err);
+        },
+      });
   }
 
   onEnrol() {
@@ -172,14 +184,14 @@ export class Teacher implements OnInit {
     this.subjectService.enrolUser(subjectId, studentId).subscribe({
       next: () => {
         this.successMessage.set(`Successfully enrolled student ${studentId}.`);
-        this.errorMessage.set('');
+        this.errorMessage.set("");
         this.loadData();
-        setTimeout(() => this.successMessage.set(''), 3000);
+        setTimeout(() => this.successMessage.set(""), 3000);
       },
       error: (err) => {
         this.errorMessage.set(`Failed to enrol student ${studentId}.`);
         console.error(err);
-      }
+      },
     });
   }
 
@@ -189,14 +201,14 @@ export class Teacher implements OnInit {
     this.subjectService.unenrolUser(subjectId, studentId).subscribe({
       next: () => {
         this.successMessage.set(`Successfully un-enrolled student.`);
-        this.errorMessage.set('');
+        this.errorMessage.set("");
         this.loadData();
-        setTimeout(() => this.successMessage.set(''), 3000);
+        setTimeout(() => this.successMessage.set(""), 3000);
       },
       error: (err) => {
         this.errorMessage.set(`Failed to un-enrol student.`);
         console.error(err);
-      }
+      },
     });
   }
 }

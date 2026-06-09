@@ -25,7 +25,9 @@ export class StudentForm implements OnInit {
   username = signal<string>("");
 
   ngOnInit() {
-    this.isLoggedIn.set(!!this.tokenStorage.getToken() && this.tokenStorage.getToken() !== '{}');
+    this.isLoggedIn.set(
+      !!this.tokenStorage.getToken() && this.tokenStorage.getToken() !== "{}",
+    );
     if (this.isLoggedIn()) {
       this.username.set(this.tokenStorage.getUsername());
       const roles = this.tokenStorage.getAuthorities();
@@ -35,7 +37,7 @@ export class StudentForm implements OnInit {
       if (!this.isTeacher() && !this.isAdmin()) {
         this.gradeService.getGrades().subscribe({
           next: (data) => this.grades.set(data),
-          error: (err) => console.error(err)
+          error: (err) => console.error(err),
         });
       }
     }
@@ -43,9 +45,8 @@ export class StudentForm implements OnInit {
 
   getGradesForSubject(subjectId?: number): Grade[] {
     if (subjectId === undefined) return [];
-    return this.grades().filter(g => g.subject.id === subjectId);
+    return this.grades().filter((g) => g.subject.id === subjectId);
   }
-
 
   getSubjects(): void {
     this.subjectService.getSubjects().subscribe({
@@ -72,7 +73,9 @@ export class StudentForm implements OnInit {
     if (subject.id === undefined) return;
     this.subjectService.deleteSubject(subject.id).subscribe({
       next: () => {
-        this.subjectList.update((list) => list.filter((s) => s.id !== subject.id));
+        this.subjectList.update((list) =>
+          list.filter((s) => s.id !== subject.id),
+        );
       },
     });
   }
@@ -80,15 +83,19 @@ export class StudentForm implements OnInit {
   update(name: string, subject: Subject): void {
     name = name.trim();
     if (!name || subject.id === undefined) return;
-    this.subjectService.updateSubject(subject.id, { name } as Subject).subscribe({
-      next: (updatedSubject) => {
-        if (updatedSubject) {
-          this.subjectList.update((list) =>
-            list.map((s) => (s.id === updatedSubject.id ? updatedSubject : s))
-          );
-        }
-      },
-    });
+    this.subjectService
+      .updateSubject(subject.id, { name } as Subject)
+      .subscribe({
+        next: (updatedSubject) => {
+          if (updatedSubject) {
+            this.subjectList.update((list) =>
+              list.map((s) =>
+                s.id === updatedSubject.id ? updatedSubject : s,
+              ),
+            );
+          }
+        },
+      });
   }
 
   logout() {
@@ -96,4 +103,3 @@ export class StudentForm implements OnInit {
     window.location.reload();
   }
 }
-

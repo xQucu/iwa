@@ -1,18 +1,16 @@
-import {Component, inject, signal} from '@angular/core';
-import {SignupInfo} from '../auth/signup-info';
-import {AuthService} from '../auth/auth-service';
-import {FormsModule} from '@angular/forms';
-import {NgTemplateOutlet} from '@angular/common';
-import {RouterLink} from '@angular/router';
+import { Component, inject, signal } from "@angular/core";
+import { SignupInfo } from "../auth/signup-info";
+import { AuthService } from "../auth/auth-service";
+import { FormsModule } from "@angular/forms";
+import { NgTemplateOutlet } from "@angular/common";
+import { RouterLink } from "@angular/router";
 
 @Component({
-  selector: 'app-register',
+  selector: "app-register",
   imports: [FormsModule, RouterLink],
-  templateUrl: './register.html',
-  styleUrl: './register.css',
+  templateUrl: "./register.html",
+  styleUrl: "./register.css",
 })
-
-
 export class Register {
   form: any = {};
   signupInfo?: SignupInfo;
@@ -24,35 +22,20 @@ export class Register {
   onSubmit() {
     console.log(this.form);
 
-    this.signupInfo = new SignupInfo(
-      this.form.username,
-      this.form.password,
-      ['student']
-    );
-
-
+    this.signupInfo = new SignupInfo(this.form.username, this.form.password, [
+      "student",
+    ]);
 
     this.authService.signUp(this.signupInfo).subscribe({
-      next: (data) =>
-      {
+      next: (data) => {
         console.log(data);
         this.isSignedUp.set(true);
         this.isSignUpFailed.set(false);
-      }
-      ,
+      },
       error: (error) => {
         console.log(error);
         this.isSignUpFailed.set(true);
-      }
+      },
     });
-
   }
-
 }
-
-
-
-
-
-
-

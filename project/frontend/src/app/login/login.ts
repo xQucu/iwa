@@ -1,19 +1,17 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {LoginInfo} from '../auth/login-info';
-import {AuthService} from '../auth/auth-service';
-import {TokenStorageService} from '../auth/token-storage-service';
-import {FormsModule} from '@angular/forms';
-import {NgTemplateOutlet} from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
+import { Component, inject, OnInit, signal } from "@angular/core";
+import { LoginInfo } from "../auth/login-info";
+import { AuthService } from "../auth/auth-service";
+import { TokenStorageService } from "../auth/token-storage-service";
+import { FormsModule } from "@angular/forms";
+import { NgTemplateOutlet } from "@angular/common";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   imports: [FormsModule, RouterLink],
-  templateUrl: './login.html',
-  styleUrl: './login.css',
+  templateUrl: "./login.html",
+  styleUrl: "./login.css",
 })
-
-
 export class Login implements OnInit {
   form: any = {};
   token?: string;
@@ -30,10 +28,13 @@ export class Login implements OnInit {
   // constructor(private authService: AuthService, private tokenStorage: TokenStorageService) { }
 
   ngOnInit() {
-    if (this.tokenStorage.getToken() != null && this.tokenStorage.getToken() != '{}') {
+    if (
+      this.tokenStorage.getToken() != null &&
+      this.tokenStorage.getToken() != "{}"
+    ) {
       this.isLoggedIn.set(true);
       this.roles = this.tokenStorage.getAuthorities();
-      this.router.navigate(['']);
+      this.router.navigate([""]);
     }
   }
 
@@ -44,8 +45,8 @@ export class Login implements OnInit {
 
     this.authService.attemptAuth(this.loginInfo).subscribe({
       next: (data) => {
-        this.tokenStorage.saveToken(data.accessToken || '{}');
-        this.tokenStorage.saveUsername(data.username || '{}');
+        this.tokenStorage.saveToken(data.accessToken || "{}");
+        this.tokenStorage.saveUsername(data.username || "{}");
         this.tokenStorage.saveAuthorities(data.authorities || []);
 
         this.isLoginFailed.set(false);
@@ -53,25 +54,15 @@ export class Login implements OnInit {
         this.token = this.tokenStorage.getToken();
         this.roles = this.tokenStorage.getAuthorities();
         this.reloadPage();
-      }
-      ,
+      },
       error: (error) => {
         console.log(error);
         this.isLoginFailed.set(true);
-      }
+      },
     });
-
   }
 
   reloadPage() {
     window.location.reload();
   }
-
 }
-
-
-
-
-
-
-

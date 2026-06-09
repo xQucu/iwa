@@ -18,12 +18,8 @@ public class Subject {
     private String name;
 
     @jakarta.persistence.ManyToMany(fetch = jakarta.persistence.FetchType.LAZY)
-    @jakarta.persistence.JoinTable(
-        name = "subject_users",
-        joinColumns = @jakarta.persistence.JoinColumn(name = "subject_id"),
-        inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "user_id")
-    )
-    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({"password", "roles"})
+    @jakarta.persistence.JoinTable(name = "subject_users", joinColumns = @jakarta.persistence.JoinColumn(name = "subject_id"), inverseJoinColumns = @jakarta.persistence.JoinColumn(name = "user_id"))
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "password", "roles" })
     private java.util.Set<User> enrolledUsers = new java.util.HashSet<>();
 
     public Subject() {
